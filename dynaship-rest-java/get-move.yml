@@ -1,0 +1,24 @@
+http:
+  rootPath: /dynaship/*
+  port: 8080
+  adminPort: 8081
+  requestLog:
+    console:
+      enabled: true
+    file:
+      enabled: false
+    syslog:
+      enabled: false
+
+# Logging settings.
+logging:
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+  loggers:
+    "com.github": ERROR
+    "com.yammer.dropwizard": INFO
+    "com.yammer.dropwizard.config.ServerFactory": ERROR
+  console:
+    enabled: true
+
+strategy: se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluationStrategy
