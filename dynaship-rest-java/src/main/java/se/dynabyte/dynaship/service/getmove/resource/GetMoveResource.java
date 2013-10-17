@@ -12,7 +12,8 @@ import se.dynabyte.dynaship.service.getmove.model.GameState;
 
 import com.yammer.metrics.annotation.Timed;
 
-@Path("/get-move") 
+
+@Path("/get-move")
 @Consumes(MediaType.APPLICATION_JSON_UTF_8) 
 @Produces(MediaType.APPLICATION_JSON_UTF_8) 
 public class GetMoveResource {

@@ -40,7 +40,7 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
 			strategy = (GameStateEvaluationStrategy) strategyClass.newInstance();
 			
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			log.warn("Failed to instantiate strategy class [{}] from configuration. Using default strategy [" + BasicGameStateEvaluationStrategy.class.getName() + "] instead.", configuration.getStrategy());
+			log.warn("Failed to instantiate strategy class [{}] from configuration. Using default strategy [" + BasicGameStateEvaluationStrategy.class.getName() + "] instead.", configuration.getStrategy(), e);
 			strategy = new BasicGameStateEvaluationStrategy();
 		}
 		return strategy;
