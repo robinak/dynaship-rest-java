@@ -25,23 +25,15 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
         bootstrap.setName("get-move");
     }
 
+    
 	@Override
     public void run(GetMoveConfiguration configuration, Environment environment) {
 		
-		GameStateEvaluationStrategy strategy = getStrategy(configuration);
-        environment.addResource(new GetMoveResource(strategy));
+		GameStateEvaluationStrategy strategy = new BasicGameStateEvaluationStrategy();
+		GetMoveResource resource = new GetMoveResource(strategy);
+		log.info("Setting strategy class for evaluating game state to: {} for GetMoveResource", strategy.getClass().getName());
+       
+		environment.addResource(resource);
     }
 
-	private GameStateEvaluationStrategy getStrategy(GetMoveConfiguration configuration) {
-		GameStateEvaluationStrategy strategy;
-		try {
-			Class<?> strategyClass = Class.forName(configuration.getStrategy());
-			strategy = (GameStateEvaluationStrategy) strategyClass.newInstance();
-			
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			log.warn("Failed to instantiate strategy class [{}] from configuration. Using default strategy [" + BasicGameStateEvaluationStrategy.class.getName() + "] instead.", configuration.getStrategy(), e);
-			strategy = new BasicGameStateEvaluationStrategy();
-		}
-		return strategy;
-	}
 }

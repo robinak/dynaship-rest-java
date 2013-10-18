@@ -20,6 +20,3 @@ logging:
     "com.yammer.dropwizard.config.ServerFactory": ERROR
   console:
     enabled: true
-
-#Fully qualified name of the class to use for deciding the coordinate of the next shot by evaluating the current game state.
-strategy: se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluationStrategy
