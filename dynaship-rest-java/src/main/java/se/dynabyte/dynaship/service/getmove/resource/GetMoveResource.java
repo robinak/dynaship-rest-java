@@ -18,7 +18,7 @@ import com.yammer.metrics.annotation.Timed;
 @Produces(MediaType.APPLICATION_JSON_UTF_8) 
 public class GetMoveResource {
 	
-	private GameStateEvaluationStrategy strategy;
+	private final GameStateEvaluationStrategy strategy;
 	
 	public GetMoveResource(GameStateEvaluationStrategy strategy) {
 		this.strategy = strategy;
@@ -28,5 +28,10 @@ public class GetMoveResource {
 	public Coordinate getMove(GameState gameState) {
 		return strategy.getMove(gameState);
 	}
+
+	public GameStateEvaluationStrategy getStategy() {
+		return strategy;
+	}
+
 
 }

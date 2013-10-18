@@ -32,8 +32,7 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
         environment.addResource(new GetMoveResource(strategy));
     }
 
-	private GameStateEvaluationStrategy getStrategy(
-			GetMoveConfiguration configuration) {
+	private GameStateEvaluationStrategy getStrategy(GetMoveConfiguration configuration) {
 		GameStateEvaluationStrategy strategy;
 		try {
 			Class<?> strategyClass = Class.forName(configuration.getStrategy());
