@@ -3,20 +3,23 @@ package se.dynabyte.dynaship.service.getmove.model;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Coordinate {
-	
+/**
+ * This class represents a position on the game board.
+ */
+public class Coordinates {
+
 	private final int x;
 	private final int y;
-	
-	public Coordinate(int x, int y) {
+
+	public Coordinates(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public int getX() {
 		return x;
 	}
-	
+
 	public int getY() {
 		return y;
 	}
@@ -41,7 +44,7 @@ public class Coordinate {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		Coordinate other = (Coordinate) obj;
+		Coordinates other = (Coordinates) obj;
 		if (x != other.x) {
 			return false;
 		}
@@ -53,7 +56,8 @@ public class Coordinate {
 
 	@Override
 	public String toString() {
-		return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).build();
+		return new ReflectionToStringBuilder(this,
+				ToStringStyle.SHORT_PREFIX_STYLE).build();
 	}
 
 }

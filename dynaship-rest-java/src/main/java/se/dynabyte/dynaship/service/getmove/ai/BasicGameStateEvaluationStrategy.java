@@ -2,7 +2,7 @@ package se.dynabyte.dynaship.service.getmove.ai;
 
 import java.util.Random;
 
-import se.dynabyte.dynaship.service.getmove.model.Coordinate;
+import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 
 public class BasicGameStateEvaluationStrategy implements GameStateEvaluationStrategy {
@@ -10,11 +10,11 @@ public class BasicGameStateEvaluationStrategy implements GameStateEvaluationStra
 	private static final Random random = new Random();
 
 	@Override
-	public Coordinate getMove(GameState gameState) {
+	public Coordinates getMove(GameState gameState) {
 		int boardSize = gameState.getBoardSize();
 		int x = getRandomNumber(boardSize);
 		int y = getRandomNumber(boardSize);
-		return new Coordinate(x, y);
+		return new Coordinates(x, y);
 	}
 	
 	private int getRandomNumber(int upperLimitExclusive) {

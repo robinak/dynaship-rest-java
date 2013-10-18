@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Shot {
 	
-	private final Coordinate coordinate;
+	private final Coordinates coordinate;
 	private final State state;
 	private final int shipId;
 	
@@ -19,12 +19,12 @@ public class Shot {
 			@JsonProperty("state") State state,
 			@JsonProperty("ship") int shipId) {
 		
-		this.coordinate = new Coordinate(x, y);
+		this.coordinate = new Coordinates(x, y);
 		this.state = state;
 		this.shipId = shipId;
 	}
 
-	public Coordinate getCoordinate() {
+	public Coordinates getCoordinate() {
 		return coordinate;
 	}
 

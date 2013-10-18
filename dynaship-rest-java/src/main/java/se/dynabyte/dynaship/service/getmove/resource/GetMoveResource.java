@@ -7,7 +7,7 @@ import javax.ws.rs.Produces;
 
 import se.dynabyte.dynaship.service.getmove.MediaType;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
-import se.dynabyte.dynaship.service.getmove.model.Coordinate;
+import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 
 import com.yammer.metrics.annotation.Timed;
@@ -25,7 +25,7 @@ public class GetMoveResource {
 	}
 	
 	@POST @Timed
-	public Coordinate getMove(GameState gameState) {
+	public Coordinates getMove(GameState gameState) {
 		return strategy.getMove(gameState);
 	}
 
