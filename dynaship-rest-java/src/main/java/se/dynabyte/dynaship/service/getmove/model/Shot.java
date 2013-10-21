@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Shot {
 	
-	private final Coordinates coordinate;
+	private final Coordinates coordinates;
 	private final State state;
 	private final int shipId;
 	
@@ -19,13 +19,13 @@ public class Shot {
 			@JsonProperty("state") State state,
 			@JsonProperty("ship") int shipId) {
 		
-		this.coordinate = new Coordinates(x, y);
+		this.coordinates = new Coordinates(x, y);
 		this.state = state;
 		this.shipId = shipId;
 	}
 
-	public Coordinates getCoordinate() {
-		return coordinate;
+	public Coordinates getCoordinates() {
+		return coordinates;
 	}
 
 	public State getState() {
@@ -41,7 +41,7 @@ public class Shot {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((coordinate == null) ? 0 : coordinate.hashCode());
+				+ ((coordinates == null) ? 0 : coordinates.hashCode());
 		return result;
 	}
 
@@ -57,11 +57,11 @@ public class Shot {
 			return false;
 		}
 		Shot other = (Shot) obj;
-		if (coordinate == null) {
-			if (other.coordinate != null) {
+		if (coordinates == null) {
+			if (other.coordinates != null) {
 				return false;
 			}
-		} else if (!coordinate.equals(other.coordinate)) {
+		} else if (!coordinates.equals(other.coordinates)) {
 			return false;
 		}
 		return true;

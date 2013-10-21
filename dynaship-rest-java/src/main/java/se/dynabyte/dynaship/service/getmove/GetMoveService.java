@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.ChainGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.ExistingHitGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.configuration.GetMoveConfiguration;
 import se.dynabyte.dynaship.service.getmove.resource.GetMoveResource;
@@ -29,7 +31,8 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
 	@Override
     public void run(GetMoveConfiguration configuration, Environment environment) {
 		
-		GameStateEvaluationStrategy strategy = new BasicGameStateEvaluationStrategy();
+//		GameStateEvaluationStrategy strategy = new BasicGameStateEvaluationStrategy();
+		GameStateEvaluationStrategy strategy = new ChainGameStateEvaluationStrategy(new ExistingHitGameStateEvaluationStrategy());
 		GetMoveResource resource = new GetMoveResource(strategy);
 		log.info("Setting strategy class for evaluating game state to: {} for GetMoveResource", strategy.getClass().getName());
        
