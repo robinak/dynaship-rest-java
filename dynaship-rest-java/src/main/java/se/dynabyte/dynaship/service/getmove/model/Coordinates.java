@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * This class represents a position on the game board.
  */
-public class Coordinates {
+public class Coordinates implements Comparable<Coordinates> {
 
 	private final int x;
 	private final int y;
@@ -23,6 +23,23 @@ public class Coordinates {
 	public int getY() {
 		return y;
 	}
+	
+	public boolean isNonDiagonalNeigbour(Coordinates other) {
+		return isColumnNeighbour(other) || isRowNeighbour(other);
+	}
+	
+	public boolean isColumnNeighbour(Coordinates other) {
+		boolean sameColumn = this.x == other.x;
+		boolean columnNeighbour = sameColumn && Math.abs(this.y - other.y) == 1;
+		return columnNeighbour;
+	}
+	
+	public boolean isRowNeighbour(Coordinates other) {
+		boolean sameRow = this.y == other.y;
+		boolean rowNeighbour = sameRow && Math.abs(this.x - other.x) == 1;
+		return rowNeighbour;
+	}
+	
 
 	@Override
 	public int hashCode() {
@@ -58,6 +75,29 @@ public class Coordinates {
 	public String toString() {
 		return new ReflectionToStringBuilder(this,
 				ToStringStyle.SHORT_PREFIX_STYLE).build();
+	}
+
+	@Override
+	public int compareTo(Coordinates c) {
+		if (this.y < c.y) {
+			return -1;
+			
+		} else if (this.y > c.y) {
+			return 1;
+			
+		} else {
+			
+			if (this.x < c.x) {
+				return -1;
+				
+			} else if (this.x > c.x) {
+				return 1;
+				
+			} else {
+				return 0;
+			}
+			
+		}
 	}
 
 }
