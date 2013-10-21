@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.LargestFirstComparator;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ShotCollector;
@@ -15,7 +17,7 @@ import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup.Direction;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.model.State;
-import se.dynabyte.dynaship.service.getmove.util.advanced.ShotUtil;
+import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 
 /**
  * This strategy focus on finding existing hits on seaworthy ships
@@ -33,7 +35,7 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		Collection<Shot> shots = gameState.getShots();
 		Collection<Shot> hitsOnSeaworthyShips = new ShotCollector(shots).collect(State.SEAWORTHY);
 		
-		Collection<CoordinatesGroup> groups = new ArrayList<CoordinatesGroup>();
+		Set<CoordinatesGroup> groups = new HashSet<CoordinatesGroup>();
 		
 		for (Shot shot : hitsOnSeaworthyShips) {
 			addCurrentCoordinatesToGroups(groups, shot.getCoordinates());
@@ -42,6 +44,26 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		
 		Coordinates target = getTarget(groups, shots, gameState.getBoardSize());
 		return target;
+	}
+	
+	private void addCurrentCoordinatesToGroups(Collection<CoordinatesGroup> groups, Coordinates current) {
+		
+		//We need to create groups for directions in which c isn't part of any group.
+		Collection<Direction> directionsToCreateNewGroupsForCoordinate = new ArrayList<Direction>(Arrays.asList(Direction.values()));
+		
+		for (CoordinatesGroup group : groups) {
+			
+			if (group.isNeighbourTo(current)) {
+				group.add(current);
+				directionsToCreateNewGroupsForCoordinate.remove(group.getDirection());
+			}
+		}
+		
+		for (Direction direction : directionsToCreateNewGroupsForCoordinate) {
+			CoordinatesGroup group = new CoordinatesGroup(direction);
+			group.add(current);
+			groups.add(group);
+		}
 	}
 
 	private void mergeAdjacentGroups(Collection<CoordinatesGroup> groups) {
@@ -66,26 +88,6 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		groups.removeAll(groupsThatWereMerged);
 		groups.addAll(newMergedGroups);
 	}
-
-	private void addCurrentCoordinatesToGroups(Collection<CoordinatesGroup> groups, Coordinates current) {
-		
-		//We need to create groups for directions in which c isn't part of any group.
-		Collection<Direction> directionsToCreateNewGroupsForCoordinate = new ArrayList<Direction>(Arrays.asList(Direction.values()));
-		
-		for (CoordinatesGroup group : groups) {
-			
-			if (group.isNeighbourTo(current)) {
-				group.add(current);
-				directionsToCreateNewGroupsForCoordinate.remove(group.getDirection());
-			}
-		}
-		
-		for (Direction direction : directionsToCreateNewGroupsForCoordinate) {
-			CoordinatesGroup group = new CoordinatesGroup(direction);
-			group.add(current);
-			groups.add(group);
-		}
-	}
 	
 	private Coordinates getTarget(Collection<CoordinatesGroup> groups, Collection<Shot> shots, int boardSize) {
 		List<CoordinatesGroup> groupsLargestFirst = new ArrayList<CoordinatesGroup>(groups);
@@ -101,7 +103,7 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 				targetCandidates = getNeighboursInGoupDirection(group);
 			}
 			
-			Collection<Coordinates> existingShotCoordinates = ShotUtil.getCoordinates(shots);
+			Collection<Coordinates> existingShotCoordinates = CoordinatesUtil.getCoordinates(shots);
 			targetCandidates.removeAll(existingShotCoordinates);
 			
 			removeOutOfBoundsCoordinates(targetCandidates, boardSize);
@@ -146,11 +148,11 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		switch(group.getDirection()) {
 		case HORIZONTAL: 
 			neighbours.add(new Coordinates(first.getX() - 1, first.getY()));
-			neighbours.add(new Coordinates(last.getX() + 1, first.getY()));
+			neighbours.add(new Coordinates(last.getX() + 1, last.getY()));
 			break;
 		case VERTICAL:
 			neighbours.add(new Coordinates(first.getX(), first.getY() - 1));
-			neighbours.add(new Coordinates(last.getX(), first.getY() + 1));
+			neighbours.add(new Coordinates(last.getX(), last.getY() + 1));
 			break;
 		}
 		

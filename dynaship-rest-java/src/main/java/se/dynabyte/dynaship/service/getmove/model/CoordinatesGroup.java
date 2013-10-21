@@ -31,8 +31,12 @@ public class CoordinatesGroup extends TreeSet<Coordinates> {
 	}
 	
 	private boolean isHorizontalNeighbour(Coordinates other) {
+		if (this.contains(other)) {
+			return false;
+		}
+		
 		for (Coordinates c : this) {
-			if (c.isRowNeighbour(other)) {
+			if (c.isHorizontalNeighbour(other)) {
 				return true;
 			}
 		}
@@ -40,8 +44,12 @@ public class CoordinatesGroup extends TreeSet<Coordinates> {
 	}
 	
 	private boolean isVerticalNeighbour(Coordinates other) {
+		if (this.contains(other)) {
+			return false;
+		}
+		
 		for (Coordinates c : this) {
-			if (c.isColumnNeighbour(other)) {
+			if (c.isVerticalNeighbour(other)) {
 				return true;
 			}
 		}
@@ -56,5 +64,35 @@ public class CoordinatesGroup extends TreeSet<Coordinates> {
 		HORIZONTAL,
 		VERTICAL;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((direction == null) ? 0 : direction.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		CoordinatesGroup other = (CoordinatesGroup) obj;
+		if (direction != other.direction) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }
