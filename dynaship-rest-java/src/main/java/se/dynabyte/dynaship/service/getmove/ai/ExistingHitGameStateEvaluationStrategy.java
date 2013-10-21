@@ -15,6 +15,7 @@ import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup.Direction;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.model.State;
+import se.dynabyte.dynaship.service.getmove.util.advanced.ShotUtil;
 
 /**
  * This strategy focus on finding existing hits on seaworthy ships
@@ -29,67 +30,69 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 	@Override
 	public Coordinates getMove(GameState gameState) {
 		
-		ShotCollector collector = new ShotCollector(gameState.getShots());
-		
-		Collection<Shot> hitsOnUnsunkenShips = collector.collect(State.SEAWORTHY);
-		
+		Collection<Shot> shots = gameState.getShots();
+		Collection<Shot> hitsOnSeaworthyShips = new ShotCollector(shots).collect(State.SEAWORTHY);
 		
 		Collection<CoordinatesGroup> groups = new ArrayList<CoordinatesGroup>();
 		
-		for (Shot shot : hitsOnUnsunkenShips) {
-			Coordinates c = shot.getCoordinates();
-			
-			//We need to create groups for directions in which c isn't part of any group.
-			Collection<Direction> directionsToCreateNewGroups = new ArrayList<Direction>(Arrays.asList(Direction.values()));
-			
-			for (CoordinatesGroup group : groups) {
-				
-				if (group.isNeighbourTo(c)) {
-					group.add(c);
-					directionsToCreateNewGroups.remove(group.getDirection());
-				}
-			}
-			
-			for (Direction direction : directionsToCreateNewGroups) {
-				CoordinatesGroup group = new CoordinatesGroup(direction);
-				group.add(c);
-				groups.add(group);
-			}
-			
-			Collection<CoordinatesGroup> groupsThatWereMerged = new ArrayList<CoordinatesGroup>();
-			Collection<CoordinatesGroup> newMergedGroups = new ArrayList<CoordinatesGroup>();
-			//Go through groups again and see if any groups are neighbours. If so, merge them.
-			for (CoordinatesGroup group : groups) {
-				for (CoordinatesGroup g : groups) {
-					if (group.isNeighbourTo(g)) {
-						
-						CoordinatesGroup mergedGroup = new CoordinatesGroup(group.getDirection());
-						mergedGroup.addAll(group);
-						mergedGroup.addAll(g);
-						newMergedGroups.add(mergedGroup);
-						
-						groupsThatWereMerged.add(group);
-						groupsThatWereMerged.add(g);
-					}
-				}
-			}
-			
-			groups.removeAll(groupsThatWereMerged);
-			groups.addAll(newMergedGroups);
-			
+		for (Shot shot : hitsOnSeaworthyShips) {
+			addCurrentCoordinatesToGroups(groups, shot.getCoordinates());
+			mergeAdjacentGroups(groups);
 		}
 		
-		Coordinates target = getTarget(groups, gameState);
+		Coordinates target = getTarget(groups, shots, gameState.getBoardSize());
 		return target;
 	}
+
+	private void mergeAdjacentGroups(Collection<CoordinatesGroup> groups) {
+		Collection<CoordinatesGroup> groupsThatWereMerged = new ArrayList<CoordinatesGroup>();
+		Collection<CoordinatesGroup> newMergedGroups = new ArrayList<CoordinatesGroup>();
+		//Go through groups again and see if any groups are neighbours. If so, merge them.
+		for (CoordinatesGroup group : groups) {
+			for (CoordinatesGroup g : groups) {
+				if (group.isNeighbourTo(g)) {
+					
+					CoordinatesGroup mergedGroup = new CoordinatesGroup(group.getDirection());
+					mergedGroup.addAll(group);
+					mergedGroup.addAll(g);
+					newMergedGroups.add(mergedGroup);
+					
+					groupsThatWereMerged.add(group);
+					groupsThatWereMerged.add(g);
+				}
+			}
+		}
+		
+		groups.removeAll(groupsThatWereMerged);
+		groups.addAll(newMergedGroups);
+	}
+
+	private void addCurrentCoordinatesToGroups(Collection<CoordinatesGroup> groups, Coordinates current) {
+		
+		//We need to create groups for directions in which c isn't part of any group.
+		Collection<Direction> directionsToCreateNewGroupsForCoordinate = new ArrayList<Direction>(Arrays.asList(Direction.values()));
+		
+		for (CoordinatesGroup group : groups) {
+			
+			if (group.isNeighbourTo(current)) {
+				group.add(current);
+				directionsToCreateNewGroupsForCoordinate.remove(group.getDirection());
+			}
+		}
+		
+		for (Direction direction : directionsToCreateNewGroupsForCoordinate) {
+			CoordinatesGroup group = new CoordinatesGroup(direction);
+			group.add(current);
+			groups.add(group);
+		}
+	}
 	
-	private Coordinates getTarget(Collection<CoordinatesGroup> groups, GameState gameState) {
+	private Coordinates getTarget(Collection<CoordinatesGroup> groups, Collection<Shot> shots, int boardSize) {
 		List<CoordinatesGroup> groupsLargestFirst = new ArrayList<CoordinatesGroup>(groups);
 		sortGroupsBySizeInDecendingOrder(groupsLargestFirst);
 		
-		Collection<Coordinates> targetCandidates;
-		
 		for (CoordinatesGroup group : groupsLargestFirst) {
+			Collection<Coordinates> targetCandidates;
 			
 			if (group.size() == 1) {
 				targetCandidates = getNonDiagonalNeighbours(group);
@@ -98,10 +101,10 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 				targetCandidates = getNeighboursInGoupDirection(group);
 			}
 			
-			Collection<Coordinates> shotCoordinates = getShotCoordinates(gameState.getShots());
-			targetCandidates.removeAll(shotCoordinates);
+			Collection<Coordinates> existingShotCoordinates = ShotUtil.getCoordinates(shots);
+			targetCandidates.removeAll(existingShotCoordinates);
 			
-			removeCoordinatesOutOfBounds(targetCandidates, gameState.getBoardSize());
+			removeOutOfBoundsCoordinates(targetCandidates, boardSize);
 			
 			if (!targetCandidates.isEmpty()) {
 				return targetCandidates.iterator().next();
@@ -153,18 +156,9 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		
 		return neighbours;
 	}
+
 	
-	private Collection<Coordinates> getShotCoordinates(Collection<Shot> shots) {
-		Collection<Coordinates> shotCoordinates = new ArrayList<Coordinates>();
-		
-		for (Shot shot : shots) {
-			shotCoordinates.add(shot.getCoordinates());
-		}
-		
-		return shotCoordinates;
-	}
-	
-	private void removeCoordinatesOutOfBounds(Collection<Coordinates> coordinates, int boardSize) {
+	private void removeOutOfBoundsCoordinates(Collection<Coordinates> coordinates, int boardSize) {
 		
 		for(Iterator<Coordinates> it = coordinates.iterator(); it.hasNext();) {
 			Coordinates current = it.next();
