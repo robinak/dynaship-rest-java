@@ -53,7 +53,7 @@ public class CoordinatesTest {
 	}
 	
 	@Test
-	public void sort() {
+	public void sorts_on_y_value_and_then_x_value() {
 		List<Coordinates> coordinates = new ArrayList<Coordinates>();
 		Coordinates a = new Coordinates(0, 0);
 		Coordinates b = new Coordinates(1, 0);
