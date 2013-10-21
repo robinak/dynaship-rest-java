@@ -23,23 +23,6 @@ public class Coordinates implements Comparable<Coordinates> {
 	public int getY() {
 		return y;
 	}
-	
-	public boolean isNonDiagonalNeigbour(Coordinates other) {
-		return isColumnNeighbour(other) || isRowNeighbour(other);
-	}
-	
-	public boolean isColumnNeighbour(Coordinates other) {
-		boolean sameColumn = this.x == other.x;
-		boolean columnNeighbour = sameColumn && Math.abs(this.y - other.y) == 1;
-		return columnNeighbour;
-	}
-	
-	public boolean isRowNeighbour(Coordinates other) {
-		boolean sameRow = this.y == other.y;
-		boolean rowNeighbour = sameRow && Math.abs(this.x - other.x) == 1;
-		return rowNeighbour;
-	}
-	
 
 	@Override
 	public int hashCode() {
