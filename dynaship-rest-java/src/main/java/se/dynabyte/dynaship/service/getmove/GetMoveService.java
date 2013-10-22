@@ -3,7 +3,6 @@ package se.dynabyte.dynaship.service.getmove;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.ChainGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.ExistingHitGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
@@ -37,7 +36,7 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
 		GameStateEvaluationStrategy strategy = new ChainGameStateEvaluationStrategy(existingHit, simple);
 		
 		GetMoveResource resource = new GetMoveResource(strategy);
-		log.info("Setting strategy class for evaluating game state to: {} for GetMoveResource", strategy.getClass().getName());
+		log.debug("Setting strategy class for evaluating game state to: {} for GetMoveResource", strategy.getClass().getName());
        
 		environment.addResource(resource);
     }

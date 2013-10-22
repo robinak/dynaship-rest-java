@@ -5,11 +5,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 
 public class ChainGameStateEvaluationStrategy implements GameStateEvaluationStrategy {
+	
+	private static final Logger log = LoggerFactory.getLogger(ExistingHitGameStateEvaluationStrategy.class);
 	
 	private final Collection<GameStateEvaluationStrategy> strategies;
 	
@@ -28,16 +33,23 @@ public class ChainGameStateEvaluationStrategy implements GameStateEvaluationStra
 	
 	private Coordinates getTarget(GameState gameState) {
 		for (GameStateEvaluationStrategy strategy : strategies) {
+			log.debug("Evaluating with strategy {}", strategy);
 			Coordinates coordinates = strategy.getMove(gameState);
+			log.debug("Evaluation returned {}", coordinates);
 			if (coordinates != null) {
 				return coordinates;
 			}
 		}
 		
-		return new BasicGameStateEvaluationStrategy().getMove(gameState);
+		Coordinates coordinates = new BasicGameStateEvaluationStrategy().getMove(gameState);
+		log.debug("Falling back to BasicGameStateEvaluationStrategy. Returning: {}", coordinates);
+		return coordinates;
 	}
 	
 	private void printGameStateAndTarget(GameState gameState, Coordinates target) {
+		
+		StringBuilder board = new StringBuilder();
+		board.append("Game state and target:\n");
 		
 		Map<Coordinates, Shot> shots = new HashMap<Coordinates, Shot>();
 		for (Shot shot : gameState.getShots()) {
@@ -62,11 +74,14 @@ public class ChainGameStateEvaluationStrategy implements GameStateEvaluationStra
 				if(c.equals(target)) {
 					ch = 'T';
 				}
-				System.out.print(ch + " ");
+				board.append(ch);
+				board.append(" ");
 				
 			}
-			System.out.println();
+			board.append("\n");
 		}
+		
+		log.debug(board.toString());
 
 	}
 

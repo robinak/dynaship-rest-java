@@ -9,6 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.LargestFirstComparator;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ShotCollector;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
@@ -24,6 +27,8 @@ import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
  *
  */
 public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluationStrategy {
+	
+	private static final Logger log = LoggerFactory.getLogger(ExistingHitGameStateEvaluationStrategy.class);
 
 	/**
 	 * @return the coordinates of the next shot or {@code null} if no valid
@@ -56,6 +61,7 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 			if (group.isNeighbourTo(current)) {
 				group.add(current);
 				directionsToCreateNewGroupsForCoordinate.remove(group.getDirection());
+				log.debug("Adding coordinates {} to existing group with direction: {}", current, group.getDirection());
 			}
 		}
 		
@@ -63,6 +69,7 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 			CoordinatesGroup group = new CoordinatesGroup(direction);
 			group.add(current);
 			groups.add(group);
+			log.debug("Adding coordinates {} to new group with direction: {}", current, direction);
 		}
 	}
 
@@ -81,6 +88,8 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 					
 					groupsThatWereMerged.add(group);
 					groupsThatWereMerged.add(g);
+					
+					log.debug("merging groups {} and {} to {}", group, g, mergedGroup);
 				}
 			}
 		}
@@ -165,6 +174,7 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		for(Iterator<Coordinates> it = coordinates.iterator(); it.hasNext();) {
 			Coordinates current = it.next();
 			if (!isValid(current, 0, boardSize - 1)) {
+				log.debug("Removing out of bounds coordinate {}", current);
 				it.remove();
 			}
 		}
