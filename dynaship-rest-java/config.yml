@@ -15,6 +15,8 @@ logging:
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
   loggers:
+    "se.dynabyte": ALL
+    "org.eclipse.jetty": ERROR
     "com.github": ERROR
     "com.yammer.dropwizard": INFO
     "com.yammer.dropwizard.config.ServerFactory": ERROR
