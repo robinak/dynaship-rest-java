@@ -1,4 +1,4 @@
-package se.dynabyte.dynaship.service.getmove.ai;
+package se.dynabyte.dynaship.service.getmove.ai.advanced;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,6 +8,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ExistingHitGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.model.Shot;

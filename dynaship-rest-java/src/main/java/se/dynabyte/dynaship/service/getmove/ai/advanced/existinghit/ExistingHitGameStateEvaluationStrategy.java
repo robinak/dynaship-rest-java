@@ -1,4 +1,4 @@
-package se.dynabyte.dynaship.service.getmove.ai;
+package se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,8 +12,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.LargestFirstComparator;
-import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ShotCollector;
+import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup;
 import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup.Direction;

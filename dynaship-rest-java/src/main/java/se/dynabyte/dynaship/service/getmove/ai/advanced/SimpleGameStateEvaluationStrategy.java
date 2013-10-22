@@ -1,9 +1,10 @@
-package se.dynabyte.dynaship.service.getmove.ai;
+package se.dynabyte.dynaship.service.getmove.ai.advanced;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;

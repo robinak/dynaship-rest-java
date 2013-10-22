@@ -3,10 +3,10 @@ package se.dynabyte.dynaship.service.getmove;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.dynabyte.dynaship.service.getmove.ai.ChainGameStateEvaluationStrategy;
-import se.dynabyte.dynaship.service.getmove.ai.ExistingHitGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
-import se.dynabyte.dynaship.service.getmove.ai.SimpleGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.advanced.ChainGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.advanced.SimpleGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ExistingHitGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.configuration.GetMoveConfiguration;
 import se.dynabyte.dynaship.service.getmove.resource.GetMoveResource;
 
