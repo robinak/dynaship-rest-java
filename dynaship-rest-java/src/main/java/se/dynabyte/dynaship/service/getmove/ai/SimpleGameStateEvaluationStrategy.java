@@ -24,7 +24,7 @@ public class SimpleGameStateEvaluationStrategy implements GameStateEvaluationStr
 		
 		if (!candidates.isEmpty()) {
 			int randomIndex = getRandomNumber(candidates.size());
-			candidates.get(randomIndex);
+			return candidates.get(randomIndex);
 		}
 		
 		return null;
