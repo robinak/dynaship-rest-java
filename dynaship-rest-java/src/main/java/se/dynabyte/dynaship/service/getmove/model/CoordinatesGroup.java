@@ -6,7 +6,7 @@ public class CoordinatesGroup extends TreeSet<Coordinates> {
 
 	private static final long serialVersionUID = 1L;
 	
-	public final Direction direction;
+	private final Direction direction;
 	
 	public CoordinatesGroup(Direction direction) {
 		this.direction = direction;
@@ -93,6 +93,16 @@ public class CoordinatesGroup extends TreeSet<Coordinates> {
 		return true;
 	}
 	
-	
+	@Override
+	public String toString() {
+		StringBuilder description = new StringBuilder();
+		description.append("[Direction: ");
+		description.append(direction);
+		description.append(", Coordinates: ");
+		description.append(super.toString());
+		description.append("]");
+		
+		return description.toString();
+	}
 
 }

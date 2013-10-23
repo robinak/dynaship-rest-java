@@ -2,15 +2,21 @@ package se.dynabyte.dynaship.service.getmove.util.advanced;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 
 public class CoordinatesUtil {
 	
-	public static Collection<Coordinates> getCoordinates(Collection<Shot> shots) {
-		Collection<Coordinates> shotCoordinates = new ArrayList<Coordinates>();
+	private static final Logger log = LoggerFactory.getLogger(CoordinatesUtil.class);
+	
+	public List<Coordinates> getCoordinates(Collection<Shot> shots) {
+		List<Coordinates> shotCoordinates = new ArrayList<Coordinates>();
 		
 		for (Shot shot : shots) {
 			shotCoordinates.add(shot.getCoordinates());
@@ -19,7 +25,7 @@ public class CoordinatesUtil {
 		return shotCoordinates;
 	}
 	
-	public static List<Coordinates> getAllCoordinates(int boardSize) {
+	public List<Coordinates> getAllCoordinates(int boardSize) {
 		List<Coordinates> allCoordinates = new ArrayList<Coordinates>();
 		
 		for(int i=0; i<boardSize; i++) {
@@ -28,6 +34,40 @@ public class CoordinatesUtil {
 			}
 		}
 		return allCoordinates;
+	}
+	
+	public List<Coordinates> getNonDiagonalNeighbours(Coordinates coordinates) {
+		
+		Coordinates up = new Coordinates(coordinates.getX(), coordinates.getY() -1);
+		Coordinates right = new Coordinates(coordinates.getX() +1, coordinates.getY());
+		Coordinates down = new Coordinates(coordinates.getX(), coordinates.getY() + 1);
+		Coordinates left = new Coordinates(coordinates.getX() -1, coordinates.getY());
+		
+		List<Coordinates> neighbours = new ArrayList<Coordinates>();
+		neighbours.add(up);
+		neighbours.add(right);
+		neighbours.add(down);
+		neighbours.add(left);
+		
+		log.debug("Getting non diagonal neighbours for {}, result: {}", coordinates, neighbours);
+		return neighbours;
+	}
+	
+	public void removeOutOfBoundsCoordinates(Collection<Coordinates> coordinates, int boardSize) {
+		
+		for(Iterator<Coordinates> it = coordinates.iterator(); it.hasNext();) {
+			Coordinates current = it.next();
+			if (!isValid(current, 0, boardSize - 1)) {
+				log.debug("Removing out of bounds coordinates {}", current);
+				it.remove();
+			}
+		}
+	}
+	
+	private boolean isValid(Coordinates coordinates, int min, int max) {
+		int x = coordinates.getX();
+		int y = coordinates.getY();		
+		return x >= min && y >= min && x <= max && y <= max;
 	}
 
 }
