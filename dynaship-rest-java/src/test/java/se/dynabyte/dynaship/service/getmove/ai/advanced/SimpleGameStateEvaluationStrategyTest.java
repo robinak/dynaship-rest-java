@@ -21,7 +21,7 @@ import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
-import se.dynabyte.dynaship.service.getmove.util.advanced.RandomUtil;
+import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
 
 public class SimpleGameStateEvaluationStrategyTest {
 	
@@ -29,7 +29,7 @@ public class SimpleGameStateEvaluationStrategyTest {
 	
 	@Mock private CoordinatesUtil coordinatesUtil;
 	@Mock private GameState gameState;
-	@Mock private RandomUtil randomUtil;
+	@Mock private Randomizer randomUtil;
 	
 	private List<Coordinates> allCoordinates;
 	
@@ -60,7 +60,7 @@ public class SimpleGameStateEvaluationStrategyTest {
 		
 		when(coordinatesUtil.getAllCoordinates(anyInt())).thenReturn(allCoordinates);
 		when(coordinatesUtil.getCoordinates(Matchers.<Collection<Shot>>any())).thenReturn(Collections.<Coordinates>emptyList());
-		when(randomUtil.getRandomNumber(anyInt())).thenReturn(2);
+		when(randomUtil.getRandomInt(anyInt())).thenReturn(2);
 		
 		Coordinates zero_one = new Coordinates(0, 1);
 		Coordinates result = strategy.getMove(gameState);
@@ -77,7 +77,7 @@ public class SimpleGameStateEvaluationStrategyTest {
 		
 		when(coordinatesUtil.getAllCoordinates(anyInt())).thenReturn(allCoordinates);
 		when(coordinatesUtil.getCoordinates(Matchers.<Collection<Shot>>any())).thenReturn(shotCoordinates);
-		when(randomUtil.getRandomNumber(anyInt())).thenReturn(0);
+		when(randomUtil.getRandomInt(anyInt())).thenReturn(0);
 		
 		
 		Coordinates result = strategy.getMove(gameState);

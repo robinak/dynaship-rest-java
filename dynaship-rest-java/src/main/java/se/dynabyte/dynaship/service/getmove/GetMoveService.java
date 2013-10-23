@@ -12,7 +12,7 @@ import se.dynabyte.dynaship.service.getmove.resource.GetMoveResource;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesGroupUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.GameStateLogger;
-import se.dynabyte.dynaship.service.getmove.util.advanced.RandomUtil;
+import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
 
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
@@ -23,7 +23,7 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
 	private static final Logger log = LoggerFactory.getLogger(GetMoveService.class);
 	private static final CoordinatesUtil coordinatesUtil = new CoordinatesUtil();
 	private static final CoordinatesGroupUtil coordinatesGroupUtil = new CoordinatesGroupUtil();
-	private static final RandomUtil randomUtil = new RandomUtil();
+	private static final Randomizer randomUtil = new Randomizer();
 	private static final GameStateLogger gameStateLogger = new GameStateLogger();
 	
     public static void main(String[] args) throws Exception {

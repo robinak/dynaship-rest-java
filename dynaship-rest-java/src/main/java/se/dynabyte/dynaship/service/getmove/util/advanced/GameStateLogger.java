@@ -14,6 +14,11 @@ public class GameStateLogger {
 	
 	private static final Logger log = LoggerFactory.getLogger(GameStateLogger.class);
 	
+	/**
+	 * Logs a visual representation of the game state and target.
+	 * @param gameState - the game state to be logged.
+	 * @param target - the target coordinates.
+	 */
 	public void log(GameState gameState, Coordinates target) {
 		
 		StringBuilder board = new StringBuilder();

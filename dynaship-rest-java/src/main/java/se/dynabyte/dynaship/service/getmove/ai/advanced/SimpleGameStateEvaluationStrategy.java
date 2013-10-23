@@ -7,14 +7,14 @@ import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
-import se.dynabyte.dynaship.service.getmove.util.advanced.RandomUtil;
+import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
 
 public class SimpleGameStateEvaluationStrategy implements GameStateEvaluationStrategy {
 
 	private final CoordinatesUtil coordinatesUtil;
-	private final RandomUtil randomUtil;
+	private final Randomizer randomUtil;
 	
-	public SimpleGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil, RandomUtil randomUtil) {
+	public SimpleGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil, Randomizer randomUtil) {
 		this.coordinatesUtil = coordinatesUtil;
 		this.randomUtil = randomUtil;
 	}
@@ -30,7 +30,7 @@ public class SimpleGameStateEvaluationStrategy implements GameStateEvaluationStr
 		candidates.removeAll(existingShotCoordinates);
 		
 		if (!candidates.isEmpty()) {
-			int randomIndex = randomUtil.getRandomNumber(candidates.size());
+			int randomIndex = randomUtil.getRandomInt(candidates.size());
 			return candidates.get(randomIndex);
 		}
 		

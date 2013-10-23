@@ -16,7 +16,7 @@ import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.model.State;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesGroupUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
-import se.dynabyte.dynaship.service.getmove.util.advanced.RandomUtil;
+import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
 
 /**
  * This strategy focus on finding existing hits on seaworthy ships
@@ -27,10 +27,10 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 	private static final Logger log = LoggerFactory.getLogger(ExistingHitGameStateEvaluationStrategy.class);
 	
 	private final CoordinatesUtil coordinatesUtil;
-	private final RandomUtil randomUtil;
+	private final Randomizer randomUtil;
 	private final CoordinatesGroupUtil coordinatesGroupUtil;
 	
-	public ExistingHitGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil,  CoordinatesGroupUtil coordinatesGroupUtil, RandomUtil randomUtil) {
+	public ExistingHitGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil,  CoordinatesGroupUtil coordinatesGroupUtil, Randomizer randomUtil) {
 		this.coordinatesUtil = coordinatesUtil;
 		this.coordinatesGroupUtil = coordinatesGroupUtil;
 		this.randomUtil = randomUtil;
@@ -83,7 +83,7 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 			log.debug("Target candidates: {}", targetCandidates);
 			
 			if (!targetCandidates.isEmpty()) {
-				int randomIndex = randomUtil.getRandomNumber(targetCandidates.size());
+				int randomIndex = randomUtil.getRandomInt(targetCandidates.size());
 				return targetCandidates.get(randomIndex);
 			}
 		}
