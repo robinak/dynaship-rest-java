@@ -16,6 +16,13 @@ public class GameStateLogger {
 	
 	/**
 	 * Logs a visual representation of the game state and target.
+	 * <ul>
+	 * <li>S - Hit on seaworthy ship</li>
+	 * <li>C - Hit on capsized ship</li>
+	 * <li>M - Miss</li>
+	 * <li>T - Target</li>
+	 * <li>_ - Unexplored</li>
+	 * </ul>
 	 * @param gameState - the game state to be logged.
 	 * @param target - the target coordinates.
 	 */
