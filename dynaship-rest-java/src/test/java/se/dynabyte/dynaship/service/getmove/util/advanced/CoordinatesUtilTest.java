@@ -40,6 +40,6 @@ public class CoordinatesUtilTest {
 	}
 
 	private Shot getShotForCoordinates(Coordinates coordinates) {
-		return new Shot(coordinates.getX(), coordinates.getY(), null, 0);
+		return new Shot(coordinates, null, 0);
 	}
 }
