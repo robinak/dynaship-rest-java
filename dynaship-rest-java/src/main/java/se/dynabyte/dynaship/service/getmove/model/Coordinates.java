@@ -1,17 +1,26 @@
 package se.dynabyte.dynaship.service.getmove.model;
 
+import javax.validation.constraints.Min;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * This class represents a position on the game board.
  */
 public class Coordinates implements Comparable<Coordinates> {
 
-	private final int x;
-	private final int y;
+	@Min(0) private final int x;
+	@Min(0) private final int y;
 
-	public Coordinates(int x, int y) {
+	@JsonCreator
+	public Coordinates(
+			@JsonProperty("x") int x,
+			@JsonProperty("y") int y) {
+		
 		this.x = x;
 		this.y = y;
 	}

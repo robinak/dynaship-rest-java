@@ -2,16 +2,25 @@ package se.dynabyte.dynaship.service.getmove.model;
 
 import java.util.Collection;
 
+import javax.validation.constraints.Min;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import se.dynabyte.dynaship.service.getmove.validation.ValidCollection;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GameState {
 	
+	@Min(1)
 	private final int boardSize;
+	
+	@ValidCollection(elementType = Shot.class) 
 	private final Collection<Shot> shots;
+	
+	@ValidCollection(elementType = Ship.class) 
 	private final Collection<Ship> ships;
 
 	@JsonCreator
