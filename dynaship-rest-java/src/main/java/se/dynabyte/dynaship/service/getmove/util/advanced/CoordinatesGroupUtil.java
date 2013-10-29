@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.LargestFirstComparator;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
-import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup;
-import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup.Direction;
+import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup;
+import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup.Direction;
 
 public class CoordinatesGroupUtil {
 	

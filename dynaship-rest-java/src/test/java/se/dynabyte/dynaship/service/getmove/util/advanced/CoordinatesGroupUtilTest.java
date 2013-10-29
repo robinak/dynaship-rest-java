@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
-import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup;
-import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup.Direction;
+import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup;
+import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup.Direction;
 
 public class CoordinatesGroupUtilTest {
 	

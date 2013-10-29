@@ -1,6 +1,8 @@
-package se.dynabyte.dynaship.service.getmove.model;
+package se.dynabyte.dynaship.service.getmove.model.advanced;
 
 import java.util.TreeSet;
+
+import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 
 public class CoordinatesGroup extends TreeSet<Coordinates> {
 

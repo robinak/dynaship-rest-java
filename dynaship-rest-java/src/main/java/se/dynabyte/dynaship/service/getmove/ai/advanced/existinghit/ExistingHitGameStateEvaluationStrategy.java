@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
-import se.dynabyte.dynaship.service.getmove.model.CoordinatesGroup;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.model.State;
+import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesGroupUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
