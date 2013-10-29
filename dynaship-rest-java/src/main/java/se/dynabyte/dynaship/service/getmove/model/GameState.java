@@ -18,7 +18,7 @@ public class GameState {
 	public GameState(
 			@JsonProperty("size") int boardSize,
 			@JsonProperty("shots") Collection<Shot> shots,
-			@JsonProperty("boats") Collection<Ship> ships) {
+			@JsonProperty("ships") Collection<Ship> ships) {
 		
 		this.boardSize = boardSize;
 		this.shots = shots;
