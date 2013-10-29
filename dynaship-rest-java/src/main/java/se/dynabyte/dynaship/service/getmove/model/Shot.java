@@ -14,12 +14,10 @@ public class Shot {
 	
 	@JsonCreator
 	public Shot(
-			@JsonProperty("x") int x,
-			@JsonProperty("y") int y,
-			@JsonProperty("state") State state,
-			@JsonProperty("ship") int shipId) {
-		
-		this.coordinate = new Coordinates(x, y);
+			@JsonProperty("coordinates") Coordinates coordinates,
+			@JsonProperty("shipState") State state,
+			@JsonProperty("shipId") int shipId) {
+		this.coordinate = coordinates;
 		this.state = state;
 		this.shipId = shipId;
 	}
