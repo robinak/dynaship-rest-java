@@ -1,5 +1,8 @@
 package se.dynabyte.dynaship.service.getmove.model;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -8,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Shot {
 	
-	private final Coordinates coordinate;
-	private final State state;
+	@Valid @NotNull private final Coordinates coordinate;
+	@NotNull private final State state;
 	private final int shipId;
 	
 	@JsonCreator
@@ -17,6 +20,7 @@ public class Shot {
 			@JsonProperty("coordinates") Coordinates coordinates,
 			@JsonProperty("shipState") State state,
 			@JsonProperty("shipId") int shipId) {
+		
 		this.coordinate = coordinates;
 		this.state = state;
 		this.shipId = shipId;

@@ -15,6 +15,7 @@ public enum State {
 				return state;
 			}
 		}
-		throw new IllegalArgumentException("No state corresponding to: " + string);
+		throw new IllegalArgumentException("No state corresponding to [" + string + "].");
 	}
+	
 }
