@@ -1,5 +1,6 @@
 package se.dynabyte.dynaship.service.getmove.resource;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,7 +26,7 @@ public class GetMoveResource {
 	}
 	
 	@POST @Timed
-	public Coordinates getMove(GameState gameState) {
+	public Coordinates getMove(@Valid GameState gameState) {
 		return strategy.getMove(gameState);
 	}
 

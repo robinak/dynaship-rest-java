@@ -1,5 +1,7 @@
 package se.dynabyte.dynaship.service.getmove.model;
 
+import javax.validation.constraints.Min;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -9,13 +11,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Ship {
 	
 	private final int id;
-	private final int length;
+	@Min(1)	private final Integer length;
 	private final boolean alive;
 	
 	@JsonCreator
 	public Ship(
 			@JsonProperty("id") int id, 
-			@JsonProperty("length") int lenght, 
+			@JsonProperty("length") Integer lenght, 
 			@JsonProperty("alive") boolean alive) {
 		
 		this.id = id;
