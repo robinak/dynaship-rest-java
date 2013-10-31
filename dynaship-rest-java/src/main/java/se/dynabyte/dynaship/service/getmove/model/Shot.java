@@ -13,13 +13,13 @@ public class Shot {
 	
 	@Valid @NotNull private final Coordinates coordinates;
 	@NotNull private final State state;
-	private final int shipId;
+	private final Integer shipId;
 	
 	@JsonCreator
 	public Shot(
 			@JsonProperty("coordinates") Coordinates coordinates,
 			@JsonProperty("shipState") State state,
-			@JsonProperty("shipId") int shipId) {
+			@JsonProperty("shipId") Integer shipId) {
 		
 		this.coordinates = coordinates;
 		this.state = state;
@@ -34,7 +34,7 @@ public class Shot {
 		return state;
 	}
 
-	public int getShipId() {
+	public Integer getShipId() {
 		return shipId;
 	}
 

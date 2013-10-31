@@ -11,13 +11,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Ship {
 	
 	private final int id;
-	@Min(1)	private final Integer length;
+	@Min(1)	private final int length;
 	private final boolean alive;
 	
 	@JsonCreator
 	public Ship(
 			@JsonProperty("id") int id, 
-			@JsonProperty("length") Integer lenght, 
+			@JsonProperty("length") int lenght, 
 			@JsonProperty("alive") boolean alive) {
 		
 		this.id = id;
