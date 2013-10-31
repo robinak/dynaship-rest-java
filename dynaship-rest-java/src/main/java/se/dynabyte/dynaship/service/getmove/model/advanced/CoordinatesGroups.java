@@ -1,30 +1,45 @@
-package se.dynabyte.dynaship.service.getmove.util.advanced;
+package se.dynabyte.dynaship.service.getmove.model.advanced;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.LargestFirstComparator;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
-import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup;
 import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup.Direction;
 
-public class CoordinatesGroupUtil {
+public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
+
+	private static final long serialVersionUID = 1L;
 	
-	private static final Logger log = LoggerFactory.getLogger(CoordinatesGroupUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(CoordinatesGroups.class);
 	
-	public void addCoordinatesToGroups(Coordinates coordinates, Collection<CoordinatesGroup> groups) {
+	public CoordinatesGroups() {
+		super();
+	}
+	
+	public CoordinatesGroups(CoordinatesGroups groups) {
+		super(groups);
+	}
+
+	/**
+	 * Add the provided coordinates to groups it is neighbour to. New groups are
+	 * created and the coordinates added in directions in which the coordinates
+	 * does not belong to any existing group.
+	 * 
+	 * @param coordinates
+	 */
+	public void add(Coordinates coordinates) {
 		
 		//We need to create groups for directions in which c isn't part of any group.
 		Collection<Direction> directionsToCreateNewGroupsForCoordinate = new ArrayList<Direction>(Arrays.asList(Direction.values()));
 		
-		for (CoordinatesGroup group : groups) {
+		for (CoordinatesGroup group : this) {
 			
 			if (group.isNeighbourTo(coordinates)) {
 				log.debug("Adding {} to existing group {}", coordinates, group);
@@ -37,11 +52,17 @@ public class CoordinatesGroupUtil {
 			log.debug("Adding {} to new group with direction: {}", coordinates, direction);
 			CoordinatesGroup group = new CoordinatesGroup(direction);
 			group.add(coordinates);
-			groups.add(group);
+			this.add(group);
 		}
 	}
 	
-	public Collection<CoordinatesGroup> mergeAdjacentGroups(Collection<CoordinatesGroup> groups) {
+	public void mergeAdjacent() {
+		Collection<CoordinatesGroup> mergedGroups = this.mergeAdjacentGroups(this);
+		this.clear();
+		this.addAll(mergedGroups);
+	}
+	
+	private Collection<CoordinatesGroup> mergeAdjacentGroups(Collection<CoordinatesGroup> groups) {
 		
 		log.debug("mergeAdjacentGroups called with: {}", groups);
 		
@@ -95,31 +116,8 @@ public class CoordinatesGroupUtil {
 		return g1.getDirection() == g2.getDirection();
 	}
 	
-	public List<Coordinates> getNeighboursInGoupDirection(CoordinatesGroup group) {
-		
-		List<Coordinates> neighbours = new ArrayList<Coordinates>();
-		
-		Coordinates first = group.first();
-		Coordinates last = group.last();
-		
-		Direction direction = group.getDirection();
-		switch(direction) {
-		case HORIZONTAL: 
-			neighbours.add(new Coordinates(first.getX() - 1, first.getY()));
-			neighbours.add(new Coordinates(last.getX() + 1, last.getY()));
-			break;
-		case VERTICAL:
-			neighbours.add(new Coordinates(first.getX(), first.getY() - 1));
-			neighbours.add(new Coordinates(last.getX(), last.getY() + 1));
-			break;
-		}
-		
-		log.debug("Getting directional neighbours for group: {}, result: {}", group, neighbours);
-		return neighbours;
-	}
-	
-	public void sortGroupsBySizeInDecendingOrder(List<CoordinatesGroup> groups) {
-		Collections.sort(groups, new LargestFirstComparator());
+	public void sortBySizeInDecendingOrder() {
+		Collections.sort(this, new LargestFirstComparator());
 	}
 
 }

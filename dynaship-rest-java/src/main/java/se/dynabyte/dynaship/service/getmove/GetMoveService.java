@@ -10,7 +10,6 @@ import se.dynabyte.dynaship.service.getmove.ai.advanced.SimpleGameStateEvaluatio
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ExistingHitGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.configuration.GetMoveConfiguration;
 import se.dynabyte.dynaship.service.getmove.resource.GetMoveResource;
-import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesGroupUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.GameStateLogger;
 import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
@@ -23,7 +22,6 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
 	
 	private static final Logger log = LoggerFactory.getLogger(GetMoveService.class);
 	private static final CoordinatesUtil coordinatesUtil = new CoordinatesUtil();
-	private static final CoordinatesGroupUtil coordinatesGroupUtil = new CoordinatesGroupUtil();
 	private static final Randomizer randomUtil = new Randomizer();
 	private static final GameStateLogger gameStateLogger = new GameStateLogger();
 	
@@ -39,7 +37,7 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
 	@Override
     public void run(GetMoveConfiguration configuration, Environment environment) {
 		
-		GameStateEvaluationStrategy existingHit = new ExistingHitGameStateEvaluationStrategy(coordinatesUtil, coordinatesGroupUtil, randomUtil);
+		GameStateEvaluationStrategy existingHit = new ExistingHitGameStateEvaluationStrategy(coordinatesUtil, randomUtil);
 		GameStateEvaluationStrategy simple = new SimpleGameStateEvaluationStrategy(coordinatesUtil, randomUtil);
 		GameStateEvaluationStrategy strategy = new ChainGameStateEvaluationStrategy(gameStateLogger, existingHit, simple);
 		

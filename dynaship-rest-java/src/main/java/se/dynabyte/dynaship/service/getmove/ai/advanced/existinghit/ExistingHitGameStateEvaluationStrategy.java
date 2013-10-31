@@ -1,8 +1,6 @@
 package se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,7 +12,7 @@ import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.model.State;
 import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup;
-import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesGroupUtil;
+import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroups;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
 
@@ -28,11 +26,9 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 	
 	private final CoordinatesUtil coordinatesUtil;
 	private final Randomizer randomUtil;
-	private final CoordinatesGroupUtil coordinatesGroupUtil;
 	
-	public ExistingHitGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil,  CoordinatesGroupUtil coordinatesGroupUtil, Randomizer randomUtil) {
+	public ExistingHitGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil, Randomizer randomUtil) {
 		this.coordinatesUtil = coordinatesUtil;
-		this.coordinatesGroupUtil = coordinatesGroupUtil;
 		this.randomUtil = randomUtil;
 	}
 
@@ -46,13 +42,13 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		Collection<Shot> shots = gameState.getShots();
 		Collection<Shot> hitsOnSeaworthyShips = new ShotCollector(shots).collect(State.SEAWORTHY);
 		
-		Collection<CoordinatesGroup> groups = new HashSet<CoordinatesGroup>();
+		CoordinatesGroups groups = new CoordinatesGroups();
 		
 		for (Shot shot : hitsOnSeaworthyShips) {
-			coordinatesGroupUtil.addCoordinatesToGroups(shot.getCoordinates(), groups);
+			groups.add(shot.getCoordinates());
 		}
 		
-		groups = coordinatesGroupUtil.mergeAdjacentGroups(groups);
+		groups.mergeAdjacent();
 		
 		log.debug("Resulting groups: {}", groups);
 		
@@ -60,9 +56,9 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		return target;
 	}
 	
-	private Coordinates getTarget(Collection<CoordinatesGroup> groups, Collection<Shot> shots, int boardSize) {
-		List<CoordinatesGroup> groupsLargestFirst = new ArrayList<CoordinatesGroup>(groups);
-		coordinatesGroupUtil.sortGroupsBySizeInDecendingOrder(groupsLargestFirst);
+	private Coordinates getTarget(CoordinatesGroups groups, Collection<Shot> shots, int boardSize) {
+		CoordinatesGroups groupsLargestFirst = new CoordinatesGroups(groups);
+		groupsLargestFirst.sortBySizeInDecendingOrder();
 		
 		for (CoordinatesGroup group : groupsLargestFirst) {
 			List<Coordinates> targetCandidates;
@@ -71,7 +67,7 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 				targetCandidates = coordinatesUtil.getNonDiagonalNeighbours(group.first());
 				
 			} else {
-				targetCandidates = coordinatesGroupUtil.getNeighboursInGoupDirection(group);
+				targetCandidates = coordinatesUtil.getNeighboursInGoupDirection(group);
 			}
 			
 			List<Coordinates> existingShotCoordinates = coordinatesUtil.getCoordinates(shots);

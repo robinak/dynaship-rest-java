@@ -1,10 +1,7 @@
-package se.dynabyte.dynaship.service.getmove.util.advanced;
+package se.dynabyte.dynaship.service.getmove.model.advanced;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,10 +9,9 @@ import org.junit.Test;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup;
 import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup.Direction;
+import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroups;
 
-public class CoordinatesGroupUtilTest {
-	
-	private CoordinatesGroupUtil util = new CoordinatesGroupUtil();
+public class CoordinatesGroupsTest {
 	
 	private Coordinates x1y0;
 	private Coordinates x2y0;
@@ -95,15 +91,17 @@ public class CoordinatesGroupUtilTest {
 	
 	@Test
 	public void mergeAdjacentGroups_merges_h1_and_h2_to_h3() {
-		Collection<CoordinatesGroup> mergedGroups = util.mergeAdjacentGroups(buildGroups(h1, h2));
+		CoordinatesGroups mergedGroups = buildGroups(h1, h2);
+		mergedGroups.mergeAdjacent();
 		
 		assertEquals(1, mergedGroups.size());
 		assertTrue(mergedGroups.contains(h1h2));
 	}
 	
 	@Test
-	public void mergeAdjacentGroups_merges_h1_and_h3_to_h3() {
-		Collection<CoordinatesGroup> mergedGroups = util.mergeAdjacentGroups(buildGroups(h1, h1h2));
+	public void mergeAdjacentGroups_merges_h1_and_h1h2_to_h1h2() {
+		CoordinatesGroups mergedGroups = buildGroups(h1, h1h2);
+		mergedGroups.mergeAdjacent();
 		
 		assertEquals(1, mergedGroups.size());
 		assertTrue(mergedGroups.contains(h1h2));
@@ -111,7 +109,8 @@ public class CoordinatesGroupUtilTest {
 	
 	@Test 
 	public void mergeAdjacentGroups_merges_h1_and_h2_and_h1h2_and_h3_and_h4_and_h3h4_to_h1h2h3h4() {
-		Collection<CoordinatesGroup> mergedGroups = util.mergeAdjacentGroups(buildGroups(h1, h2, h1h2, h3, h4, h3h4));
+		CoordinatesGroups mergedGroups = buildGroups(h1, h2, h1h2, h3, h4, h3h4);
+		mergedGroups.mergeAdjacent();
 		
 		assertEquals(1, mergedGroups.size());
 		assertTrue(mergedGroups.contains(h1h2h3h4));
@@ -119,7 +118,8 @@ public class CoordinatesGroupUtilTest {
 	
 	@Test 
 	public void mergeAdjacentGroups_merges_h1_and_h3_and_h2_to_h1h2h3() {
-		Collection<CoordinatesGroup> mergedGroups = util.mergeAdjacentGroups(buildGroups(h1, h3, h2 ));
+		CoordinatesGroups mergedGroups = buildGroups(h1, h3, h2 );
+		mergedGroups.mergeAdjacent();
 		
 		assertEquals(1, mergedGroups.size());
 		assertTrue(mergedGroups.contains(h1h2h3));
@@ -127,7 +127,8 @@ public class CoordinatesGroupUtilTest {
 	
 	@Test 
 	public void mergeAdjacentGroups_merges_h1h2_and_h2h3_and_v2_and_v1_and_v3_to_h1h2h3_and_v1_and_v2_and_3() {
-		Collection<CoordinatesGroup> mergedGroups = util.mergeAdjacentGroups(buildGroups(h1h2, h2h3, v2, v1, v3));
+		CoordinatesGroups mergedGroups = buildGroups(h1h2, h2h3, v2, v1, v3);
+		mergedGroups.mergeAdjacent();
 		
 		assertEquals(4, mergedGroups.size());
 		assertTrue(mergedGroups.contains(h1h2h3));
@@ -138,14 +139,16 @@ public class CoordinatesGroupUtilTest {
 	
 	@Test
 	public void mergeAdjacentGroups_does_not_merge_h1_and_v1() {
-		Collection<CoordinatesGroup> mergedGroups = util.mergeAdjacentGroups(buildGroups(h1, v1));
+		CoordinatesGroups mergedGroups = buildGroups(h1, v1);
+		mergedGroups.mergeAdjacent();
+		
 		assertEquals(2, mergedGroups.size());
 		assertTrue(mergedGroups.contains(h1));
 		assertTrue(mergedGroups.contains(v1));
 	}
 	
-	private Collection<CoordinatesGroup> buildGroups(CoordinatesGroup... coordinatesGroups) {
-		Collection<CoordinatesGroup> groups = new ArrayList<CoordinatesGroup>();
+	private CoordinatesGroups buildGroups(CoordinatesGroup... coordinatesGroups) {
+		CoordinatesGroups groups = new CoordinatesGroups();
 		
 		for(CoordinatesGroup group : coordinatesGroups) {
 			groups.add(group);
