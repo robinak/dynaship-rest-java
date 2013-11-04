@@ -9,12 +9,14 @@ import org.slf4j.LoggerFactory;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
+import se.dynabyte.dynaship.service.getmove.model.Ship;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.model.State;
 import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup;
 import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroups;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
+import se.dynabyte.dynaship.service.getmove.util.advanced.ShipsUtil;
 
 /**
  * This strategy focus on finding existing hits on seaworthy ships
@@ -24,10 +26,12 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 	
 	private static final Logger log = LoggerFactory.getLogger(ExistingHitGameStateEvaluationStrategy.class);
 	
+	private final ShipsUtil shipsUtil;
 	private final CoordinatesUtil coordinatesUtil;
 	private final Randomizer randomUtil;
 	
-	public ExistingHitGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil, Randomizer randomUtil) {
+	public ExistingHitGameStateEvaluationStrategy(ShipsUtil shipsUtil, CoordinatesUtil coordinatesUtil, Randomizer randomUtil) {
+		this.shipsUtil = shipsUtil;
 		this.coordinatesUtil = coordinatesUtil;
 		this.randomUtil = randomUtil;
 	}
@@ -52,11 +56,11 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		
 		log.debug("Resulting groups: {}", groups);
 		
-		Coordinates target = getTarget(groups, shots, gameState.getBoardSize());
+		Coordinates target = getTarget(groups, shots, hitsOnSeaworthyShips, gameState.getShips(), gameState.getBoardSize());
 		return target;
 	}
 	
-	private Coordinates getTarget(CoordinatesGroups groups, Collection<Shot> shots, int boardSize) {
+	private Coordinates getTarget(CoordinatesGroups groups, Collection<Shot> shots, Collection<Shot> hitsOnSeaworthyShips, Collection<Ship> ships, int boardSize) {
 		CoordinatesGroups groupsLargestFirst = new CoordinatesGroups(groups);
 		groupsLargestFirst.sortBySizeInDecendingOrder();
 		
@@ -78,9 +82,23 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 			
 			log.debug("Target candidates: {}", targetCandidates);
 			
-			if (!targetCandidates.isEmpty()) {
+			Collection<Coordinates> seaworthyCoordinates = coordinatesUtil.getCoordinates(hitsOnSeaworthyShips);
+			int minShipLength = shipsUtil.getMinimumLenghtOfAliveShip(ships);
+			
+			List<Coordinates> candidates = coordinatesUtil.getAllCoordinates(boardSize); 
+			candidates.removeAll(existingShotCoordinates);
+			
+			while (!targetCandidates.isEmpty()) {
 				int randomIndex = randomUtil.getRandomInt(targetCandidates.size());
-				return targetCandidates.get(randomIndex);
+				Coordinates candidate = targetCandidates.get(randomIndex);
+				
+				if (coordinatesUtil.hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(candidate, minShipLength, candidates, seaworthyCoordinates)) {
+					return candidate;
+				}
+				
+				targetCandidates.remove(candidate);
+				candidates.remove(candidate);
+				log.debug("Removed candidate: {} since smallest ship cannot fit around these coordinates.", candidate);
 			}
 		}
 		

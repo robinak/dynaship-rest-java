@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup;
+import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroups;
 import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroup.Direction;
 
 public class CoordinatesUtil {
@@ -93,6 +94,20 @@ public class CoordinatesUtil {
 		
 		log.debug("Getting directional neighbours for group: {}, result: {}", group, neighbours);
 		return neighbours;
+	}
+	
+	public boolean hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(Coordinates coordinates, int minShipLength, Collection<Coordinates> candidates, Collection<Coordinates> seaworthyCoordinates) {
+		
+		CoordinatesGroups groups = new CoordinatesGroups();
+		
+		Collection<Coordinates> candidatesAndHitsOnSeaworthyShips = new ArrayList<Coordinates>();
+		candidatesAndHitsOnSeaworthyShips.addAll(candidates);
+		candidatesAndHitsOnSeaworthyShips.addAll(seaworthyCoordinates);
+		
+		groups.addAllCoordinates(candidatesAndHitsOnSeaworthyShips);
+		groups.mergeAdjacent();
+		
+		return groups.contains(coordinates, minShipLength);
 	}
 
 }

@@ -56,6 +56,12 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 		}
 	}
 	
+	public void addAllCoordinates(Collection<Coordinates> coordinatesCollection) {
+		for (Coordinates coordinates : coordinatesCollection) {
+			add(coordinates);
+		}
+	}
+	
 	public void mergeAdjacent() {
 		Collection<CoordinatesGroup> mergedGroups = this.mergeAdjacentGroups(this);
 		this.clear();
@@ -118,6 +124,15 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 	
 	public void sortBySizeInDecendingOrder() {
 		Collections.sort(this, new LargestFirstComparator());
+	}
+	
+	public boolean contains(Coordinates coordinates, int minGroupSize) {
+		for (CoordinatesGroup group : this) {
+			if (group.size() >= minGroupSize && group.contains(coordinates)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -31,7 +31,7 @@ public class ChainGameStateEvaluationStrategy implements GameStateEvaluationStra
 		gameStateLogger.log(gameState, target);
 		return target;
 	}
-	
+
 	private Coordinates getTarget(GameState gameState) {
 		for (GameStateEvaluationStrategy strategy : strategies) {
 			log.debug("Evaluating with strategy {}", strategy);

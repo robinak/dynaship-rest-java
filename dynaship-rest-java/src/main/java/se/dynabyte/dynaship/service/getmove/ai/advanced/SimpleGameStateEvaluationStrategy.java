@@ -3,18 +3,29 @@ package se.dynabyte.dynaship.service.getmove.ai.advanced;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ShotCollector;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
+import se.dynabyte.dynaship.service.getmove.model.Shot;
+import se.dynabyte.dynaship.service.getmove.model.State;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
+import se.dynabyte.dynaship.service.getmove.util.advanced.ShipsUtil;
 
 public class SimpleGameStateEvaluationStrategy implements GameStateEvaluationStrategy {
+	
+	private static final Logger log = LoggerFactory.getLogger(SimpleGameStateEvaluationStrategy.class);
 
+	private final ShipsUtil shipsUtil;
 	private final CoordinatesUtil coordinatesUtil;
 	private final Randomizer randomUtil;
 	
-	public SimpleGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil, Randomizer randomUtil) {
+	public SimpleGameStateEvaluationStrategy(ShipsUtil shipsUtil, CoordinatesUtil coordinatesUtil, Randomizer randomUtil) {
+		this.shipsUtil = shipsUtil;
 		this.coordinatesUtil = coordinatesUtil;
 		this.randomUtil = randomUtil;
 	}
@@ -29,12 +40,24 @@ public class SimpleGameStateEvaluationStrategy implements GameStateEvaluationStr
 		Collection<Coordinates> existingShotCoordinates = coordinatesUtil.getCoordinates(gameState.getShots());
 		candidates.removeAll(existingShotCoordinates);
 		
-		if (!candidates.isEmpty()) {
+		Collection<Shot> shots = gameState.getShots();
+		Collection<Shot> hitsOnSeaworthyShips = new ShotCollector(shots).collect(State.SEAWORTHY);
+		Collection<Coordinates> seaworthyCoordinates = coordinatesUtil.getCoordinates(hitsOnSeaworthyShips);
+		
+		while (!candidates.isEmpty()) {
 			int randomIndex = randomUtil.getRandomInt(candidates.size());
-			return candidates.get(randomIndex);
+			Coordinates candidate = candidates.get(randomIndex);
+			
+			int minShipLenght = shipsUtil.getMinimumLenghtOfAliveShip(gameState.getShips());
+			
+			if (coordinatesUtil.hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(candidate, minShipLenght, candidates, seaworthyCoordinates)) {
+				return candidate;
+			}
+			
+			candidates.remove(candidate);
+			log.debug("Removed candidate: {} since smallest ship cannot fit around these coordinates.", candidate);
 		}
 		
 		return null;
 	}
-	
 }
