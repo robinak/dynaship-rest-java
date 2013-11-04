@@ -8,14 +8,13 @@ import org.slf4j.LoggerFactory;
 
 import se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
-import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ExistingHitGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
 import se.dynabyte.dynaship.service.getmove.util.advanced.GameStateLogger;
 
 public class ChainGameStateEvaluationStrategy implements GameStateEvaluationStrategy {
 	
-	private static final Logger log = LoggerFactory.getLogger(ExistingHitGameStateEvaluationStrategy.class);
+	private static final Logger log = LoggerFactory.getLogger(ChainGameStateEvaluationStrategy.class);
 	
 	private final GameStateLogger gameStateLogger;
 	private final Collection<GameStateEvaluationStrategy> strategies;

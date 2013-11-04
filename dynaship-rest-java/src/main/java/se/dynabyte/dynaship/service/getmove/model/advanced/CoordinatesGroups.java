@@ -35,16 +35,31 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 	 * @param coordinates
 	 */
 	public void add(Coordinates coordinates) {
-		
+		add(coordinates, false);
+	}
+	
+	public void add(Coordinates coordinates, boolean distinct) {
 		//We need to create groups for directions in which c isn't part of any group.
 		Collection<Direction> directionsToCreateNewGroupsForCoordinate = new ArrayList<Direction>(Arrays.asList(Direction.values()));
 		
+		Collection<CoordinatesGroup> newGroups = new ArrayList<CoordinatesGroup>();
 		for (CoordinatesGroup group : this) {
 			
 			if (group.isNeighbourTo(coordinates)) {
-				log.debug("Adding {} to existing group {}", coordinates, group);
-				group.add(coordinates);
-				directionsToCreateNewGroupsForCoordinate.remove(group.getDirection());
+				
+				if (distinct) {
+					CoordinatesGroup newGroup = new CoordinatesGroup(group.getDirection());
+					log.debug("Adding {} to new group expanding from: {}", coordinates, group);
+					newGroup.addAll(group);
+					newGroup.add(coordinates);
+					newGroups.add(newGroup);
+					
+				} else {
+					log.debug("Adding {} to existing group {}", coordinates, group);
+					group.add(coordinates);
+					directionsToCreateNewGroupsForCoordinate.remove(group.getDirection());
+				}
+				
 			}
 		}
 		
@@ -52,13 +67,21 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 			log.debug("Adding {} to new group with direction: {}", coordinates, direction);
 			CoordinatesGroup group = new CoordinatesGroup(direction);
 			group.add(coordinates);
-			this.add(group);
+			newGroups.add(group);
 		}
+		
+		this.addAll(newGroups);
 	}
 	
 	public void addAllCoordinates(Collection<Coordinates> coordinatesCollection) {
 		for (Coordinates coordinates : coordinatesCollection) {
 			add(coordinates);
+		}
+	}
+	
+	public void addAllCoordinates(Collection<Coordinates> coordinatesCollection, boolean distinct) {
+		for (Coordinates coordinates : coordinatesCollection) {
+			add(coordinates, true);
 		}
 	}
 	
@@ -133,6 +156,16 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 			}
 		}
 		return false;
+	}
+
+	public void retainAll(int minSize) {
+		Collection<CoordinatesGroup> tooSmallGroups = new ArrayList<CoordinatesGroup>();
+		for (CoordinatesGroup group : this) {
+			if (group.size() < minSize) {
+				tooSmallGroups.add(group);
+			}
+		}
+		this.removeAll(tooSmallGroups);
 	}
 
 }

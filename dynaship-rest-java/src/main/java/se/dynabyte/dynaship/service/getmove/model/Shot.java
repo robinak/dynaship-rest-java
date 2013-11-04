@@ -18,7 +18,7 @@ public class Shot {
 	@JsonCreator
 	public Shot(
 			@JsonProperty("coordinates") Coordinates coordinates,
-			@JsonProperty("shipState") State state,
+			@JsonProperty("ship") State state,
 			@JsonProperty("shipId") Integer shipId) {
 		
 		this.coordinates = coordinates;

@@ -4,7 +4,7 @@ http:
   adminPort: 8081
   requestLog:
     console:
-      enabled: false
+      enabled: true
     file:
       enabled: false
     syslog:
@@ -17,8 +17,10 @@ logging:
   loggers:
     "se.dynabyte": ERROR
     "se.dynabyte.dynaship.service.getmove.util.advanced.GameStateLogger": DEBUG
+    "se.dynabyte.dynaship.service.getmove.ai.advanced.ChainGameStateEvaluationStrategy": DEBUG
     "se.dynabyte.dynaship.service.getmove.ai.advanced.SimpleGameStateEvaluationStrategy": DEBUG
     "se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ExistingHitGameStateEvaluationStrategy": DEBUG
+    "se.dynabyte.dynaship.service.getmove.ai.advanced.probabilitydensity.ProbabilityDensityGameStateEvaluationStrategy": DEBUG
     "org.eclipse.jetty": ERROR
     "com.github": ERROR
     "com.yammer.dropwizard": INFO

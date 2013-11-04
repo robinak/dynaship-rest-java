@@ -16,7 +16,7 @@ import com.yammer.metrics.annotation.Timed;
 
 @Path("/get-move")
 @Consumes(MediaType.APPLICATION_JSON_UTF_8) 
-@Produces(MediaType.APPLICATION_JSON_UTF_8) 
+@Produces(MediaType.APPLICATION_JSON_UTF_8)
 public class GetMoveResource {
 	
 	private final GameStateEvaluationStrategy strategy;
