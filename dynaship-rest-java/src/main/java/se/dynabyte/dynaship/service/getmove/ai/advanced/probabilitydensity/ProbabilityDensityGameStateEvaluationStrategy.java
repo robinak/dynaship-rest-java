@@ -17,29 +17,26 @@ import se.dynabyte.dynaship.service.getmove.model.advanced.CoordinatesGroups;
 import se.dynabyte.dynaship.service.getmove.model.advanced.probabilitydensity.DensityMap;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
+import se.dynabyte.dynaship.service.getmove.util.advanced.ShipsUtil;
 
 public class ProbabilityDensityGameStateEvaluationStrategy implements GameStateEvaluationStrategy {
 	
 	private static final Logger log = LoggerFactory.getLogger(ProbabilityDensityGameStateEvaluationStrategy.class);
 	
 	private final CoordinatesUtil coordinatesUtil;
+	private final ShipsUtil shipsUtil;
 	private final Randomizer randomUtil;
 	
-	public ProbabilityDensityGameStateEvaluationStrategy(CoordinatesUtil coordinatesUtil, Randomizer randomUtil) {
+	public ProbabilityDensityGameStateEvaluationStrategy(ShipsUtil shipsUtil, CoordinatesUtil coordinatesUtil, Randomizer randomUtil) {
+		this.shipsUtil = shipsUtil;
 		this.coordinatesUtil = coordinatesUtil;
 		this.randomUtil = randomUtil;
 	}
 
 	@Override
-	public Coordinates getMove(GameState gameState) {
-		
+	public Coordinates getMove(final GameState gameState) {
 		
 		int boardSize = gameState.getBoardSize();
-		
-		//This algorithm is too slow with large game boards.
-		if (boardSize > 15) {
-			return null;
-		}
 		
 		ShotCollector collector =  new ShotCollector(gameState.getShots());
 		
@@ -49,8 +46,11 @@ public class ProbabilityDensityGameStateEvaluationStrategy implements GameStateE
 		Collection<Coordinates> candidates = coordinatesUtil.getAllCoordinates(boardSize);
 		candidates.removeAll(missedOrCapsized);
 		
+		Collection<Ship> ships = gameState.getShips();
+		int maxAliveShipLength = shipsUtil.getMaximumLengthOfAliveShip(ships);
+		
 		CoordinatesGroups groups = new CoordinatesGroups();
-		groups.addAllCoordinates(candidates, true);
+		groups.addAllCoordinates(candidates, true, maxAliveShipLength);
 		
 		Collection<Shot> shotsOnSeaworthyShips = collector.collect(State.SEAWORTHY);
 		Collection<Coordinates> seaworthyCoordinates = coordinatesUtil.getCoordinates(shotsOnSeaworthyShips);
@@ -58,7 +58,7 @@ public class ProbabilityDensityGameStateEvaluationStrategy implements GameStateE
 		DensityMap densityMap = new DensityMap(boardSize, seaworthyCoordinates);
 		
 		
-		for (Ship ship : gameState.getShips()) {
+		for (Ship ship : ships) {
 			if (ship.isAlive()) {
 				
 				CoordinatesGroups shipGroups = new CoordinatesGroups(groups);
@@ -74,7 +74,7 @@ public class ProbabilityDensityGameStateEvaluationStrategy implements GameStateE
 		for(Coordinates c : seaworthyCoordinates) {
 			densityMap.remove(c);
 		}
-		List<Coordinates> targetCandidates = densityMap.getCoordinatesForHighestDensity();
+		List<Coordinates> targetCandidates = densityMap.getHighestDensityCoordinates();
 		
 		if (!targetCandidates.isEmpty()) {
 			int randomIndex = randomUtil.getRandomInt(targetCandidates.size());
@@ -84,6 +84,5 @@ public class ProbabilityDensityGameStateEvaluationStrategy implements GameStateE
 		
 		return null;
 	}
-	
 
 }

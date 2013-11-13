@@ -1,11 +1,11 @@
 package se.dynabyte.dynaship.service.getmove;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluator;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluator;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.ChainGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.advanced.FirstGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.SimpleGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ExistingHitGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.probabilitydensity.ProbabilityDensityGameStateEvaluationStrategy;
@@ -21,8 +21,6 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
 public class GetMoveService extends Service<GetMoveConfiguration> {
-	
-	private static final Logger log = LoggerFactory.getLogger(GetMoveService.class);
 	
 	private static final ShipsUtil shipsUtil = new ShipsUtil();
 	private static final CoordinatesUtil coordinatesUtil = new CoordinatesUtil();
@@ -41,13 +39,16 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
 	@Override
     public void run(GetMoveConfiguration configuration, Environment environment) {
 		
+		long timeout = configuration.getTimeout();
+		
+		GameStateEvaluationStrategy first = new FirstGameStateEvaluationStrategy();
+		GameStateEvaluationStrategy density = new ProbabilityDensityGameStateEvaluationStrategy(shipsUtil, coordinatesUtil, randomUtil);
 		GameStateEvaluationStrategy existingHit = new ExistingHitGameStateEvaluationStrategy(shipsUtil, coordinatesUtil, randomUtil);
 		GameStateEvaluationStrategy simple = new SimpleGameStateEvaluationStrategy(shipsUtil, coordinatesUtil, randomUtil);
-		GameStateEvaluationStrategy density = new ProbabilityDensityGameStateEvaluationStrategy(coordinatesUtil, randomUtil);
-		GameStateEvaluationStrategy strategy = new ChainGameStateEvaluationStrategy(gameStateLogger, density, existingHit, simple);
+		GameStateEvaluationStrategy strategy = new ChainGameStateEvaluationStrategy(timeout, gameStateLogger, first, density, existingHit, simple);
 
-		GetMoveResource resource = new GetMoveResource(strategy);
-		log.debug("Setting strategy class for evaluating game state to: {} for GetMoveResource", strategy.getClass().getName());
+		GameStateEvaluator evaluator = new BasicGameStateEvaluator(strategy);
+		GetMoveResource resource = new GetMoveResource(evaluator);
        
 		environment.addResource(resource);
     }

@@ -48,11 +48,10 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 		
 		CoordinatesGroups groups = new CoordinatesGroups();
 		
+		int maxAliveShipLength = shipsUtil.getMaximumLengthOfAliveShip(gameState.getShips());
 		for (Shot shot : hitsOnSeaworthyShips) {
-			groups.add(shot.getCoordinates());
+			groups.add(shot.getCoordinates(), maxAliveShipLength);
 		}
-		
-		groups.mergeAdjacent();
 		
 		log.debug("Resulting groups: {}", groups);
 		
@@ -83,7 +82,8 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 			log.debug("Target candidates: {}", targetCandidates);
 			
 			Collection<Coordinates> seaworthyCoordinates = coordinatesUtil.getCoordinates(hitsOnSeaworthyShips);
-			int minShipLength = shipsUtil.getMinimumLenghtOfAliveShip(ships);
+			int minAliveShipLength = shipsUtil.getMinimumLenghtOfAliveShip(ships);
+			int maxAliveShipLength = shipsUtil.getMaximumLengthOfAliveShip(ships);
 			
 			List<Coordinates> candidates = coordinatesUtil.getAllCoordinates(boardSize); 
 			candidates.removeAll(existingShotCoordinates);
@@ -92,13 +92,13 @@ public class ExistingHitGameStateEvaluationStrategy implements GameStateEvaluati
 				int randomIndex = randomUtil.getRandomInt(targetCandidates.size());
 				Coordinates candidate = targetCandidates.get(randomIndex);
 				
-				if (coordinatesUtil.hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(candidate, minShipLength, candidates, seaworthyCoordinates)) {
+				if (coordinatesUtil.hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(candidate, minAliveShipLength, maxAliveShipLength, candidates, seaworthyCoordinates)) {
 					return candidate;
 				}
 				
 				targetCandidates.remove(candidate);
 				candidates.remove(candidate);
-				log.debug("Removed candidate: {} since smallest ship cannot fit around these coordinates.", candidate);
+				log.debug("Removed candidate: {} since the smallest ship cannot fit around these coordinates.", candidate);
 			}
 		}
 		

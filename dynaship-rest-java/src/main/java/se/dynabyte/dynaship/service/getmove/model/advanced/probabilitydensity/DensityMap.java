@@ -3,6 +3,7 @@ package se.dynabyte.dynaship.service.getmove.model.advanced.probabilitydensity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
@@ -15,77 +16,62 @@ public class DensityMap extends HashMap<Coordinates, Integer> {
 	
 	private final int boardSize;
 	private final Collection<Coordinates> seaworthyCoordinates;
+	private final List<Coordinates> highestDensityCoordinates;
 	
 	public DensityMap(int boardSize, Collection<Coordinates> seaworthyCoordinates) {
+		this.boardSize = boardSize;
+		this.seaworthyCoordinates = new HashSet<Coordinates>(seaworthyCoordinates);
+		this.highestDensityCoordinates = new ArrayList<Coordinates>();
 		
 		for(int i=0; i<boardSize; i++) {
 			for (int j=0; j<boardSize; j++) {
 				put(new Coordinates(j, i), 0);
 			}
 		}
-		this.boardSize = boardSize;
-		this.seaworthyCoordinates = seaworthyCoordinates;
 	}
 	
 	public void incrementFor(CoordinatesGroups coordinatesGroups) {
 		for (CoordinatesGroup group : coordinatesGroups) {
-			
 			int seaworthyBonus = 0;
-			for ( Coordinates seaworthy : seaworthyCoordinates) {
-				if (group.contains(seaworthy)) {
-					seaworthyBonus = seaworthyBonus + boardSize * boardSize;
+					
+			for (Coordinates coordinates : group) {
+				
+				if(isSeaworty(coordinates)) {
+					seaworthyBonus += boardSize * boardSize;
 				}
+				
 			}
 			
+			//Add the group's total seaworthy bonus to all coordinates in group plus overlap bonus
 			for (Coordinates coordinates : group) {
-				int density = get(coordinates);
-				put(coordinates, ++density + seaworthyBonus);
+				int overlapBonus = 10;
+				int oldDensity = get(coordinates);
+				int newDensity = oldDensity + seaworthyBonus + overlapBonus;
+				put(coordinates, newDensity);
 			}
+			
 		}
+	}
+
+	private boolean isSeaworty(Coordinates coordinates) {
+		return seaworthyCoordinates.contains(coordinates);
 	}
 	
 	@Override
-	public String toString() {
-		StringBuilder densityMap = new StringBuilder();
-		densityMap.append("\n");
-		
-		for (int i = 0; i < boardSize; i++) {
-			for (int j = 0; j < boardSize; j++) {
-				Coordinates c = new Coordinates(j, i);
-				
-				int density = get(c);
-				
-				if (density < 1000) {
-					densityMap.append("0");
-					
-					if (density < 100) {
-						densityMap.append("0");
-						
-						if (density < 10) {
-							densityMap.append("0");
-						}
-					}
-				}
-				
-				densityMap.append(get(c));
-				densityMap.append(" ");
-				
-			}
-			densityMap.append("\n");
-		}
-		return densityMap.toString();
+	public Integer put(Coordinates coordinates, Integer density) {
+		int d = density == null || isSeaworty(coordinates) ? 0 : density;
+		updateHighestDensity(coordinates, d);
+		return super.put(coordinates, d);
 	}
 	
-	public List<Coordinates> getCoordinatesForHighestDensity() {
-		
-		int highestDensity = Integer.MIN_VALUE;
-		List<Coordinates> highestDensityCoordinates = new ArrayList<Coordinates>();
-		
-		for (Coordinates coordinates : keySet()) {
+	private void updateHighestDensity(Coordinates coordinates, int density) {
+		if (highestDensityCoordinates.isEmpty()) {
+			highestDensityCoordinates.add(coordinates);
 			
-			int density = get(coordinates);
+		} else {
+			int highestDensity = get(highestDensityCoordinates.get(0));
+			
 			if (density > highestDensity) {
-				highestDensity = density;
 				highestDensityCoordinates.clear();
 				highestDensityCoordinates.add(coordinates);
 				
@@ -93,7 +79,42 @@ public class DensityMap extends HashMap<Coordinates, Integer> {
 				highestDensityCoordinates.add(coordinates);
 			}
 		}
-
+	}
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder densityMap = new StringBuilder();
+		densityMap.append("\n");
+		
+		String highestDensity = Integer.toString(get(highestDensityCoordinates.get(0)));
+		
+		for (int i = 0; i < boardSize; i++) {
+			
+			densityMap.append("\n");
+			
+			for (int j = 0; j < boardSize; j++) {
+				Coordinates c = new Coordinates(j, i);
+				
+				String density = Integer.toString(get(c));
+				StringBuilder padding = new StringBuilder();
+				
+				while(padding.length() + density.length() < highestDensity.length()) {
+					padding.append(" ");
+				}
+				
+				densityMap.append(highestDensity.equals(density) ? "[" : " ");
+				densityMap.append(padding);
+				densityMap.append(density);
+				densityMap.append(highestDensity.equals(density) ? "]" : " ");
+				
+			}
+			densityMap.append("\n");
+		}
+		return densityMap.toString();
+	}
+	
+	public List<Coordinates> getHighestDensityCoordinates() {
 		return highestDensityCoordinates;
 	}
 	

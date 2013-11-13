@@ -17,4 +17,15 @@ public class ShipsUtil {
 		return minLength;
 	}
 
+	public int getMaximumLengthOfAliveShip(Collection<Ship> ships) {
+		int maxLength = Integer.MIN_VALUE;
+		for (Ship ship : ships) {
+			int length = ship.getLength();
+ 			if (length > maxLength && ship.isAlive()) {
+ 				maxLength = length;
+			}
+		}
+		return maxLength;
+	}
+
 }

@@ -96,7 +96,7 @@ public class CoordinatesUtil {
 		return neighbours;
 	}
 	
-	public boolean hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(Coordinates coordinates, int minShipLength, Collection<Coordinates> candidates, Collection<Coordinates> seaworthyCoordinates) {
+	public boolean hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(Coordinates coordinates, int minAliveShipLength, int maxAliveShipLength, Collection<Coordinates> candidates, Collection<Coordinates> seaworthyCoordinates) {
 		
 		CoordinatesGroups groups = new CoordinatesGroups();
 		
@@ -104,10 +104,9 @@ public class CoordinatesUtil {
 		candidatesAndHitsOnSeaworthyShips.addAll(candidates);
 		candidatesAndHitsOnSeaworthyShips.addAll(seaworthyCoordinates);
 		
-		groups.addAllCoordinates(candidatesAndHitsOnSeaworthyShips);
-		groups.mergeAdjacent();
+		groups.addAllCoordinates(candidatesAndHitsOnSeaworthyShips, true, maxAliveShipLength);
 		
-		return groups.contains(coordinates, minShipLength);
+		return groups.contains(coordinates, minAliveShipLength);
 	}
 
 }

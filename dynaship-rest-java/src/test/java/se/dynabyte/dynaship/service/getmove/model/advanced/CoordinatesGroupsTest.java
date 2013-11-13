@@ -18,6 +18,10 @@ public class CoordinatesGroupsTest {
 	private Coordinates x3y0;
 	private Coordinates x4y0;
 	
+	private Coordinates x0y1;
+	private Coordinates x0y2;
+	private Coordinates x0y3;
+	
 	private CoordinatesGroup h1;
 	private CoordinatesGroup h2;
 	private CoordinatesGroup h1h2;
@@ -35,6 +39,8 @@ public class CoordinatesGroupsTest {
 	private CoordinatesGroup v2;
 	private CoordinatesGroup v3;
 	
+	private CoordinatesGroup v1v2v3;
+	
 	@Before
 	public void setup() {
 		
@@ -43,6 +49,9 @@ public class CoordinatesGroupsTest {
 		x3y0 = new Coordinates(3, 0);
 		x4y0 = new Coordinates(4, 0);
 		
+		x0y1 = new Coordinates(0, 1);
+		x0y2 = new Coordinates(0, 2);
+		x0y3 = new Coordinates(0, 3);
 		
 		h1 = new CoordinatesGroup(Direction.HORIZONTAL);
 		h1.add(x1y0);
@@ -80,13 +89,18 @@ public class CoordinatesGroupsTest {
 		h1h2h3h4.add(x4y0);
 		
 		v1 = new CoordinatesGroup(Direction.VERTICAL);
-		v1.add(x1y0);
+		v1.add(x0y1);
 		
 		v2 = new CoordinatesGroup(Direction.VERTICAL);
-		v2.add(x2y0);
+		v2.add(x0y2);
 		
 		v3 = new CoordinatesGroup(Direction.VERTICAL);
-		v3.add(x3y0);
+		v3.add(x0y3);
+		
+		v1v2v3 = new CoordinatesGroup(Direction.VERTICAL);
+		v1v2v3.add(x0y1);
+		v1v2v3.add(x0y2);
+		v1v2v3.add(x0y3);
 	}
 	
 	@Test
@@ -126,15 +140,13 @@ public class CoordinatesGroupsTest {
 	}
 	
 	@Test 
-	public void mergeAdjacentGroups_merges_h1h2_and_h2h3_and_v2_and_v1_and_v3_to_h1h2h3_and_v1_and_v2_and_3() {
+	public void mergeAdjacentGroups_merges_h1h2_and_h2h3_and_v2_and_v1_and_v3_to_h1h2h3_and_v1v2v3() {
 		CoordinatesGroups mergedGroups = buildGroups(h1h2, h2h3, v2, v1, v3);
 		mergedGroups.mergeAdjacent();
 		
-		assertEquals(4, mergedGroups.size());
+		assertEquals(2, mergedGroups.size());
 		assertTrue(mergedGroups.contains(h1h2h3));
-		assertTrue(mergedGroups.contains(v1));
-		assertTrue(mergedGroups.contains(v2));
-		assertTrue(mergedGroups.contains(v3));
+		assertTrue(mergedGroups.contains(v1v2v3));
 	}
 	
 	@Test

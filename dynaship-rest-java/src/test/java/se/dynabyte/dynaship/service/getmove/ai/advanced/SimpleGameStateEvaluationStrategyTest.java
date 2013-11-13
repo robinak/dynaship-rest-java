@@ -18,10 +18,8 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 
-import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
-import se.dynabyte.dynaship.service.getmove.model.Ship;
 import se.dynabyte.dynaship.service.getmove.model.Shot;
 import se.dynabyte.dynaship.service.getmove.util.advanced.CoordinatesUtil;
 import se.dynabyte.dynaship.service.getmove.util.advanced.Randomizer;
@@ -66,6 +64,7 @@ public class SimpleGameStateEvaluationStrategyTest {
 		when(coordinatesUtil.hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(
 				any(Coordinates.class), 
 				anyInt(), 
+				anyInt(), 
 				anyCollectionOf(Coordinates.class), 
 				anyCollectionOf(Coordinates.class))
 				).thenReturn(true);
@@ -85,6 +84,7 @@ public class SimpleGameStateEvaluationStrategyTest {
 		
 		when(coordinatesUtil.hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(
 				any(Coordinates.class), 
+				anyInt(), 
 				anyInt(), 
 				anyCollectionOf(Coordinates.class), 
 				anyCollectionOf(Coordinates.class))

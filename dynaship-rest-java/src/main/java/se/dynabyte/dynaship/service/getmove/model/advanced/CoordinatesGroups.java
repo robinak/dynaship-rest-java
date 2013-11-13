@@ -34,18 +34,27 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 	 * 
 	 * @param coordinates
 	 */
-	public void add(Coordinates coordinates) {
-		add(coordinates, false);
+	public void add(Coordinates coordinates, int maxSize) {
+		add(coordinates, false, maxSize);
 	}
 	
-	public void add(Coordinates coordinates, boolean distinct) {
+	/**
+	 * Add the provided coordinates to groups it is neighbour to. New groups are
+	 * created and the coordinates added in directions in which the coordinates
+	 * does not belong to any existing group.
+	 * 
+	 * @param coordinates
+	 * @param distinct - if {@code true}, a new group is created from a neighbouring group and the coordinates, if {@code false}, a neighbouring group is expanded with the coordinates
+	 */
+	public void add(Coordinates coordinates, boolean distinct, int mazSize) {
 		//We need to create groups for directions in which c isn't part of any group.
 		Collection<Direction> directionsToCreateNewGroupsForCoordinate = new ArrayList<Direction>(Arrays.asList(Direction.values()));
 		
 		Collection<CoordinatesGroup> newGroups = new ArrayList<CoordinatesGroup>();
 		for (CoordinatesGroup group : this) {
 			
-			if (group.isNeighbourTo(coordinates)) {
+			int size = group.size();
+			if (size < mazSize && group.isNeighbourTo(coordinates)) {
 				
 				if (distinct) {
 					CoordinatesGroup newGroup = new CoordinatesGroup(group.getDirection());
@@ -75,13 +84,13 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 	
 	public void addAllCoordinates(Collection<Coordinates> coordinatesCollection) {
 		for (Coordinates coordinates : coordinatesCollection) {
-			add(coordinates);
+			add(coordinates, false, Integer.MAX_VALUE);
 		}
 	}
 	
-	public void addAllCoordinates(Collection<Coordinates> coordinatesCollection, boolean distinct) {
+	public void addAllCoordinates(Collection<Coordinates> coordinatesCollection, boolean distinct, int maxSize) {
 		for (Coordinates coordinates : coordinatesCollection) {
-			add(coordinates, true);
+			add(coordinates, true, maxSize);
 		}
 	}
 	
@@ -130,7 +139,7 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 	}
 	
 	private boolean shouldBeMerged(CoordinatesGroup g1, CoordinatesGroup g2, Collection<CoordinatesGroup> groupsThatWereMerged) {
-		return (g1.isNeighbourTo(g2) || isSubSet(g1, g2)) && hasSameDirection(g1, g2) && !isSame(g1, g2);
+		return !isSame(g1, g2) && g1.getDirection() == g2.getDirection() && (g1.isNeighbourTo(g2) || isSubSet(g1, g2));
 	}
 
 	private boolean isSame(CoordinatesGroup g1, CoordinatesGroup g2) {
@@ -138,11 +147,7 @@ public class CoordinatesGroups extends ArrayList<CoordinatesGroup> {
 	}
 	
 	private boolean isSubSet(CoordinatesGroup g1, CoordinatesGroup g2) {
-		return g1.containsAll(g2) || g2.containsAll(g1);
-	}
-	
-	private boolean hasSameDirection(CoordinatesGroup g1, CoordinatesGroup g2) {
-		return g1.getDirection() == g2.getDirection();
+		return (g1.contains(g1.first()) && g1.contains(g2.last())) || (g1.contains(g1.first()) && g1.contains(g1.last()));
 	}
 	
 	public void sortBySizeInDecendingOrder() {

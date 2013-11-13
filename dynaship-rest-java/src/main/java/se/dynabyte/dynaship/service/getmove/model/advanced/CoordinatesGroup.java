@@ -15,47 +15,23 @@ public class CoordinatesGroup extends TreeSet<Coordinates> {
 	}
 	
 	public boolean isNeighbourTo(CoordinatesGroup group) {
-		for (Coordinates c : group) {
-			if (isNeighbourTo(c)) {
-				return true;
-			}
+		
+		if (direction != group.direction) {
+			return false;
 		}
-		return false;
+		
+		return isNeighbourTo(group.first()) || isNeighbourTo(group.last());
+		
 	}
 	
 	public boolean isNeighbourTo(Coordinates coordinates) {
+		
 		switch(direction) {
-		case HORIZONTAL: return isHorizontalNeighbour(coordinates);
-		case VERTICAL: return isVerticalNeighbour(coordinates);
+		case HORIZONTAL: return (first().isHorizontalNeighbour(coordinates) || last().isHorizontalNeighbour(coordinates)) && !this.contains(coordinates);
+		case VERTICAL: return (first().isVerticalNeighbour(coordinates) || last().isVerticalNeighbour(coordinates))&& !this.contains(coordinates);
 		default: return false;
 		}
 		
-	}
-	
-	private boolean isHorizontalNeighbour(Coordinates other) {
-		if (this.contains(other)) {
-			return false;
-		}
-		
-		for (Coordinates c : this) {
-			if (c.isHorizontalNeighbour(other)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private boolean isVerticalNeighbour(Coordinates other) {
-		if (this.contains(other)) {
-			return false;
-		}
-		
-		for (Coordinates c : this) {
-			if (c.isVerticalNeighbour(other)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public Direction getDirection() {
@@ -67,6 +43,15 @@ public class CoordinatesGroup extends TreeSet<Coordinates> {
 		VERTICAL;
 	}
 
+	@Override
+	public boolean contains(Object o) {
+		if (o instanceof Coordinates) {
+			Coordinates c = (Coordinates) o;
+			return this.ceiling(c) != null && this.floor(c) != null;
+		}
+		return false;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

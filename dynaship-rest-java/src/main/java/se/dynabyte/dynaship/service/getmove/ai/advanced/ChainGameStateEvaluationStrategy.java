@@ -16,34 +16,49 @@ public class ChainGameStateEvaluationStrategy implements GameStateEvaluationStra
 	
 	private static final Logger log = LoggerFactory.getLogger(ChainGameStateEvaluationStrategy.class);
 	
+	private final long timeout;
 	private final GameStateLogger gameStateLogger;
 	private final Collection<GameStateEvaluationStrategy> strategies;
 	
-	public ChainGameStateEvaluationStrategy(GameStateLogger gameStateLogger, GameStateEvaluationStrategy... strategies) {
+	public ChainGameStateEvaluationStrategy(long timeout, GameStateLogger gameStateLogger, GameStateEvaluationStrategy... strategies) {
+		this.timeout = timeout;
 		this.gameStateLogger = gameStateLogger;
 		this.strategies = Arrays.asList(strategies);
 	}
 
 	@Override
 	public Coordinates getMove(GameState gameState) {
-		Coordinates target = getTarget(gameState);
-		gameStateLogger.log(gameState, target);
-		return target;
-	}
-
-	private Coordinates getTarget(GameState gameState) {
+		
+		Coordinates target = null;
+		long remainingTime = timeout;
+		
+		long startTime = System.currentTimeMillis();
 		for (GameStateEvaluationStrategy strategy : strategies) {
-			log.debug("Evaluating with strategy {}", strategy);
-			Coordinates coordinates = strategy.getMove(gameState);
-			log.debug("Evaluation returned {}", coordinates);
-			if (coordinates != null) {
-				return coordinates;
+			
+			long subStartTime = System.currentTimeMillis();
+			if (subStartTime - startTime > timeout - 50) {
+				break;
+			}
+			
+			long subTimeout = (long) (0.7 * remainingTime);
+			
+			target = new TimedGameStateEvaluator(strategy, subTimeout).evaluate(gameState);
+			
+			long elapsedTime = System.currentTimeMillis() - subStartTime;
+			remainingTime -= elapsedTime;
+			
+			if (target != null) {
+				break;
 			}
 		}
 		
-		Coordinates coordinates = new BasicGameStateEvaluationStrategy().getMove(gameState);
-		log.debug("Falling back to BasicGameStateEvaluationStrategy. Returning: {}", coordinates);
-		return coordinates;
+		if (target == null) {
+			target = new BasicGameStateEvaluationStrategy().getMove(gameState);
+			log.debug("Falling back to BasicGameStateEvaluationStrategy, returning: {}", target);
+		}
+		
+		gameStateLogger.log(gameState, target);
+		return target;
 	}
-
+	
 }

@@ -44,13 +44,15 @@ public class SimpleGameStateEvaluationStrategy implements GameStateEvaluationStr
 		Collection<Shot> hitsOnSeaworthyShips = new ShotCollector(shots).collect(State.SEAWORTHY);
 		Collection<Coordinates> seaworthyCoordinates = coordinatesUtil.getCoordinates(hitsOnSeaworthyShips);
 		
+		int minAliveShipLenght = shipsUtil.getMinimumLenghtOfAliveShip(gameState.getShips());
+		int maxAliveShipLenght = shipsUtil.getMaximumLengthOfAliveShip(gameState.getShips());
+		
 		while (!candidates.isEmpty()) {
 			int randomIndex = randomUtil.getRandomInt(candidates.size());
 			Coordinates candidate = candidates.get(randomIndex);
 			
-			int minShipLenght = shipsUtil.getMinimumLenghtOfAliveShip(gameState.getShips());
 			
-			if (coordinatesUtil.hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(candidate, minShipLenght, candidates, seaworthyCoordinates)) {
+			if (coordinatesUtil.hasEnoughUnexploredOrSeaworthyNeighboursToFitSmallestSeaworthyShip(candidate, minAliveShipLenght, maxAliveShipLenght, candidates, seaworthyCoordinates)) {
 				return candidate;
 			}
 			
