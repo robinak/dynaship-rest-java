@@ -20,7 +20,7 @@ public class TimedGameStateEvaluator implements GameStateEvaluator {
 	
 	private static final Logger log = LoggerFactory.getLogger(TimedGameStateEvaluator.class);
 	
-	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static final ExecutorService executor = Executors.newFixedThreadPool(2);
 	
 	private final GameStateEvaluationStrategy strategy;
 	private final long timeout;

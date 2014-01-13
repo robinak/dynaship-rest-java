@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluator;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.model.Coordinates;
 import se.dynabyte.dynaship.service.getmove.model.GameState;
@@ -42,7 +43,8 @@ public class ChainGameStateEvaluationStrategy implements GameStateEvaluationStra
 			
 			long subTimeout = (long) (0.7 * remainingTime);
 			
-			target = new TimedGameStateEvaluator(strategy, subTimeout).evaluate(gameState);
+//			target = new TimedGameStateEvaluator(strategy, subTimeout).evaluate(gameState);
+			target = new BasicGameStateEvaluator(strategy).evaluate(gameState);
 			
 			long elapsedTime = System.currentTimeMillis() - subStartTime;
 			remainingTime -= elapsedTime;

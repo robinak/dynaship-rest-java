@@ -5,6 +5,7 @@ import se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluator;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.GameStateEvaluator;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.ChainGameStateEvaluationStrategy;
+import se.dynabyte.dynaship.service.getmove.ai.advanced.FastDensityGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.FirstGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.SimpleGameStateEvaluationStrategy;
 import se.dynabyte.dynaship.service.getmove.ai.advanced.existinghit.ExistingHitGameStateEvaluationStrategy;
@@ -42,12 +43,13 @@ public class GetMoveService extends Service<GetMoveConfiguration> {
 		long timeout = configuration.getTimeout();
 		
 		GameStateEvaluationStrategy first = new FirstGameStateEvaluationStrategy();
+		GameStateEvaluationStrategy fastDensity = new FastDensityGameStateEvaluationStrategy(randomUtil);
 		GameStateEvaluationStrategy density = new ProbabilityDensityGameStateEvaluationStrategy(shipsUtil, coordinatesUtil, randomUtil);
 		GameStateEvaluationStrategy existingHit = new ExistingHitGameStateEvaluationStrategy(shipsUtil, coordinatesUtil, randomUtil);
 		GameStateEvaluationStrategy simple = new SimpleGameStateEvaluationStrategy(shipsUtil, coordinatesUtil, randomUtil);
-		GameStateEvaluationStrategy strategy = new ChainGameStateEvaluationStrategy(timeout, gameStateLogger, first, density, existingHit, simple);
+		GameStateEvaluationStrategy strategy = new ChainGameStateEvaluationStrategy(timeout, gameStateLogger, first, fastDensity, density, existingHit, simple);
 
-		GameStateEvaluator evaluator = new BasicGameStateEvaluator(strategy);
+		GameStateEvaluator evaluator = new BasicGameStateEvaluator(/*strategy*/fastDensity);
 		GetMoveResource resource = new GetMoveResource(evaluator);
        
 		environment.addResource(resource);
