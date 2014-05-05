@@ -1,7 +1,7 @@
 dynaship-rest-java
 ==================
 
-RESTful service api build in java using Dropwizard and Maven
+RESTful service api built in java using Dropwizard and Maven
 
 INSTALLATION
 
@@ -14,3 +14,5 @@ Using standalone Maven (command line):
 - Start service by running: ```java -jar /target/dynaship-rest-java-0.0.1-SNAPSHOT.jar server config.yml```
 
 Your endpoint is then ```http://<ip-address>:8080/dynaship/get-move```
+
+Implement your logic in se.dynabyte.dynaship.service.getmove.ai.BasicGameStateEvaluationStrategy.java
