@@ -72,7 +72,7 @@ public class Coordinates implements Comparable<Coordinates> {
 	@Override
 	public int compareTo(Coordinates c) {
 		if (this.y < c.y) {
-			return 1;
+			return -1;
 			
 		} else if (this.y > c.y) {
 			return 1;
